@@ -1,5 +1,6 @@
 package com.restaurant.management.DTO;
 
+import com.restaurant.management.responses.PagedResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,5 @@ import java.util.List;
 public class FoodCategoryDTO {
     private Integer id;
     private String name;
-    private List<FoodDTO> foods;
+    private PagedResponse<FoodDTO> foods;
 }

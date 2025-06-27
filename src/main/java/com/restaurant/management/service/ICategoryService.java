@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ICategoryService {
     List<FoodCategoryDTO> findAll();
-    FoodCategoryDTO findByIdWithFoods(Integer id);
+    FoodCategoryDTO findByIdWithFoods(Integer id, int page, int size);
 
 }

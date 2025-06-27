@@ -41,6 +41,9 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET")
                         )
                         .permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher(String.format("%s/users/me", apiPrefix), "GET")
+                        ).hasAnyRole(RoleConstants.USER)
                         .anyRequest().authenticated()
                 );
 
