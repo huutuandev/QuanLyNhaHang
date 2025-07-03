@@ -14,7 +14,7 @@ import java.util.List;
 public class TableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "TableNumber", nullable = false, unique = true)
     private Integer tableNumber;

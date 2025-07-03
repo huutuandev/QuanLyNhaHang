@@ -1,5 +1,6 @@
 package com.restaurant.management.filters;
 
+import com.restaurant.management.DTO.UserDTO;
 import com.restaurant.management.components.JwtTokenUtil;
 import com.restaurant.management.models.UserEntity;
 import lombok.NonNull;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -46,47 +48,66 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             String authHeader = request.getHeader("Authorization");
-            System.out.println("Auth header: " + authHeader);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: No token");
                 return;
             }
             String token = authHeader.substring(7);
-            System.out.println("Extracted token: " + token);
             String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
-            System.out.println("Extracted phoneNumber: " + phoneNumber);
-            if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
-                if (jwtTokenUtil.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    System.out.println("Authentication set for: " + phoneNumber);
+            if (phoneNumber != null) {
+                Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+
+                boolean needSetAuth = false;
+
+                if (currentAuth == null) {
+                    needSetAuth = true;
+                } else if (currentAuth.getPrincipal() instanceof UserDTO) {
+                    String currentPhone = ((UserDTO) currentAuth.getPrincipal()).getPhoneNumber();
+                    if (!phoneNumber.equals(currentPhone)) {
+                        needSetAuth = true;
+                    }
                 } else {
-                    System.out.println("Token validation failed for: " + phoneNumber);
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-                    return;
+                    needSetAuth = true;
+                }
+
+                if (needSetAuth) {
+                    UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
+                    if (jwtTokenUtil.validateToken(token, userDetails)) {
+                        UserDTO userDTO = UserDTO.builder()
+                                .id(userDetails.getId())
+                                .fullName(userDetails.getFullName())
+                                .phoneNumber(userDetails.getPhoneNumber())
+                                .email(userDetails.getEmail())
+                                .build();
+
+                        UsernamePasswordAuthenticationToken authenticationToken =
+                                new UsernamePasswordAuthenticationToken(userDTO, null, userDetails.getAuthorities());
+                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    } else {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                        return;
+                    }
                 }
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + e.getMessage());
         }
     }
-    private boolean isBypassToken(@NonNull  HttpServletRequest request) {
+
+    private boolean isBypassToken(@NonNull HttpServletRequest request) {
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
-                Pair.of(String.format("%s/foods/*",apiPrefix),"GET"),
+                Pair.of(String.format("%s/foods/*", apiPrefix), "GET"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
-                Pair.of(String.format("%s/categories",apiPrefix),"GET"),
-                Pair.of(String.format("%s/posts",apiPrefix),"GET"),
-                Pair.of(String.format("%s/posts/*",apiPrefix),"GET"),
-                Pair.of(String.format("%s/categories/**",apiPrefix),"GET"),
-                Pair.of(String.format("%s/home",apiPrefix),"GET")
+                Pair.of(String.format("%s/categories", apiPrefix), "GET"),
+                Pair.of(String.format("%s/posts", apiPrefix), "GET"),
+                Pair.of(String.format("%s/posts/*", apiPrefix), "GET"),
+                Pair.of(String.format("%s/categories/**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/home", apiPrefix), "GET")
         );
-        for(Pair<String, String> bypassToken: bypassTokens) {
+        for (Pair<String, String> bypassToken : bypassTokens) {
             if (request.getServletPath().contains(bypassToken.getFirst()) &&
                     request.getMethod().equals(bypassToken.getSecond())) {
                 return true;

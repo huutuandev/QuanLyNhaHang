@@ -15,7 +15,7 @@ import java.util.*;
 public class ReservationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "CustomerId")
@@ -27,6 +27,9 @@ public class ReservationEntity {
 
     @Column(name = "ReservationDate")
     private LocalDate reservationDate;
+
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
 
     @Column(name = "ReservationTime")
     private LocalTime reservationTime;
@@ -43,7 +46,7 @@ public class ReservationEntity {
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(mappedBy = "reservation",cascade = {CascadeType.MERGE,CascadeType.PERSIST}, orphanRemoval = true)
     private List<ReservationOrderEntity> reservationOrders = new ArrayList<>();
 
     @PrePersist

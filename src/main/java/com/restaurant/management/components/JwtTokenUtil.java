@@ -63,20 +63,14 @@ public class JwtTokenUtil {
         final Claims claims = this.extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
-    // Kiểm tra thời gian hết hạn của token
     public boolean isTokenExpired(String token) {
         Date expirationDate = this.extractClaim(token, Claims::getExpiration);
         return expirationDate.before(new Date());
     }
-
-    // Trích xuất username từ token
     public String extractPhoneNumber(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-
-    // Xác thực token
     public boolean validateToken(String token, UserDetails userDetails) {
         String phoneNumber = extractPhoneNumber(token);
         return phoneNumber.equals(userDetails.getUsername()) && !isTokenExpired(token);

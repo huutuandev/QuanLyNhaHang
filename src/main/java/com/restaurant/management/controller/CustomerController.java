@@ -1,18 +1,18 @@
 package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.*;
-import com.restaurant.management.models.UserEntity;
 import com.restaurant.management.responses.FoodDetailResponse;
 import com.restaurant.management.responses.NewFoodResponse;
-import com.restaurant.management.service.ICategoryService;
-import com.restaurant.management.service.IFoodService;
-import com.restaurant.management.service.IPostService;
+import com.restaurant.management.responses.UnavailableTableResponse;
+import com.restaurant.management.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,6 +24,8 @@ public class CustomerController {
     private final IPostService postService;
     private final ICategoryService categoryService;
     private final IFoodService foodService;
+    private final IReservationService reservationService;
+    private final ITableService tableService;
 
     @GetMapping("/categories")
     public ResponseEntity<List<FoodCategoryDTO>> getAllCategoriesWithFoods()
@@ -69,8 +71,43 @@ public class CustomerController {
     }
 
     @GetMapping("/users/me")
-    public ResponseEntity<UserDTO> getMe(@AuthenticationPrincipal UserEntity user) {
-        UserDTO dto = new UserDTO(user.getFullName(), user.getPhoneNumber(), null, null,null,user.getEmail());
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<UserDTO> getMe(@AuthenticationPrincipal UserDTO user) {
+        return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/reservations")
+    public ResponseEntity<ReservationDTO> createOrUpdate(@AuthenticationPrincipal UserDTO user,@RequestBody ReservationDTO dto) {
+        return ResponseEntity.ok(reservationService.createOrUpdate(user,dto));
+    }
+
+    @GetMapping("/reservations/{id}")
+    public ResponseEntity<ReservationDTO> get(@PathVariable Integer id) {
+        return ResponseEntity.ok(reservationService.getById(id));
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        reservationService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reservations")
+    public ResponseEntity<List<ReservationDTO>> getAll(@AuthenticationPrincipal UserDTO user) {
+        return ResponseEntity.ok(reservationService.getAllByUser(user.getId()));
+    }
+
+    @GetMapping("/reservations/unavailable-tables")
+    public ResponseEntity<List<UnavailableTableResponse>> getUnavailableTables(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        List<UnavailableTableResponse> result = reservationService.getUnavailableTablesWithTime(date);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/tables")
+    public ResponseEntity<List<TableDTO>> getAllTables(){
+        List<TableDTO> tableDTOS = tableService.getAllTables();
+        return ResponseEntity.ok(tableDTOS);
+    }
+
 }

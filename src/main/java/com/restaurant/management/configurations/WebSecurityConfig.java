@@ -38,11 +38,14 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/posts/*",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/categories/**",apiPrefix),"GET"),
-                                new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET")
+                                new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET"),
+                                new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET")
                         )
                         .permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher(String.format("%s/users/me", apiPrefix), "GET")
+                                new AntPathRequestMatcher(String.format("%s/users/me", apiPrefix), "GET"),
+                                new AntPathRequestMatcher(String.format("%s/reservations", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/reservations/**", apiPrefix))
                         ).hasAnyRole(RoleConstants.USER)
                         .anyRequest().authenticated()
                 );
