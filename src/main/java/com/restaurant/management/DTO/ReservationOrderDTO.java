@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ReservationOrderDTO {
     private Integer id;
-    private Integer foodId;
+    private Long foodId;
     private String foodName;
     private Integer quantity;
     private String note;

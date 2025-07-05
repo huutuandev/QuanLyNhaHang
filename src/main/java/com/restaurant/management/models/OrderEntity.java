@@ -36,7 +36,7 @@ public class OrderEntity {
         if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST,CascadeType.MERGE}, orphanRemoval = true)
     private List<OrderItemEntity> orderItems = new ArrayList<>();
 
     @OneToOne(mappedBy = "order")

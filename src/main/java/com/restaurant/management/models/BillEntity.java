@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class BillEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "OrderId")

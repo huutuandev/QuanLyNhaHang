@@ -25,7 +25,7 @@ public class FoodServiceImpl implements IFoodService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public FoodDetailResponse getFoodsAndReviews(Integer id) {
+    public FoodDetailResponse getFoodsAndReviews(Long id) {
         FoodEntity food = foodRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 

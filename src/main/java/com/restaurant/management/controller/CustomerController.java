@@ -26,6 +26,8 @@ public class CustomerController {
     private final IFoodService foodService;
     private final IReservationService reservationService;
     private final ITableService tableService;
+    private final IReviewService reviewService;
+    private final IBillService billService;
 
     @GetMapping("/categories")
     public ResponseEntity<List<FoodCategoryDTO>> getAllCategoriesWithFoods()
@@ -58,7 +60,7 @@ public class CustomerController {
     }
 
     @GetMapping("/categories/foods/{id}")
-    public ResponseEntity<FoodDetailResponse> getFoodsAndReviews(@PathVariable Integer id)
+    public ResponseEntity<FoodDetailResponse> getFoodsAndReviews(@PathVariable Long id)
     {
         FoodDetailResponse foodDetailResponse = foodService.getFoodsAndReviews(id);
         return ResponseEntity.ok(foodDetailResponse);
@@ -108,6 +110,23 @@ public class CustomerController {
     public ResponseEntity<List<TableDTO>> getAllTables(){
         List<TableDTO> tableDTOS = tableService.getAllTables();
         return ResponseEntity.ok(tableDTOS);
+    }
+    @PostMapping("/review")
+    public ResponseEntity<?> createOrUpdateReview(@AuthenticationPrincipal UserDTO userDTO,
+                                                          @RequestBody ReviewDTO reviewDTO){
+        reviewService.createOrUpdate(userDTO, reviewDTO);
+        return ResponseEntity.ok("Đánh giá đã được ghi nhận!");
+    }
+
+    @GetMapping("/bills")
+    public ResponseEntity<List<BillDTO>> getAllBillByUser(@AuthenticationPrincipal UserDTO userDTO){
+        List<BillDTO> billDTOS = billService.getAllBillByUser(userDTO);
+        return ResponseEntity.ok(billDTOS);
+    }
+    @GetMapping("/bills/{id}")
+    public ResponseEntity<BillDTO> getBillById(@PathVariable Long id){
+            BillDTO billDTO = billService.getBillById(id);
+            return ResponseEntity.ok(billDTO);
     }
 
 }

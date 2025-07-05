@@ -11,8 +11,10 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
     Optional<ReservationEntity> findByIdAndIsDeletedFalse(Integer id);
+
     @Query("SELECT r FROM ReservationEntity r WHERE r.customer.id = :customerId AND r.isDeleted = false")
     List<ReservationEntity> findByCustomerId(@Param("customerId") Long customerId);
+
     @Query("SELECT r FROM ReservationEntity r " +
             "WHERE r.table.id = :tableId " +
             "AND r.reservationDate = :date " +
@@ -23,8 +25,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Param("date") LocalDate date,
             @Param("currentId") Long currentId
     );
-    List<ReservationEntity> findAllByReservationDate(LocalDate date);
 
+    List<ReservationEntity> findAllByReservationDate(LocalDate date);
 
 
 }

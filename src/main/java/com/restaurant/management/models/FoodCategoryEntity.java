@@ -23,6 +23,6 @@ public class FoodCategoryEntity {
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private List<FoodEntity> foods = new ArrayList<>();
 }
