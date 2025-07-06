@@ -39,8 +39,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/posts/*",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/categories/**",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET"),
-                                new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET"),
-                                new AntPathRequestMatcher(String.format("%s/review",apiPrefix),"POST")
+                                new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET")
                         )
                         .permitAll()
                         .requestMatchers(
@@ -48,7 +47,9 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/reservations", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/reservations/**", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/bills",apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/bills/**",apiPrefix))
+                                new AntPathRequestMatcher(String.format("%s/bills/**",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/review",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/review/**",apiPrefix))
                         ).hasAnyRole(RoleConstants.USER)
                         .anyRequest().authenticated()
                 );

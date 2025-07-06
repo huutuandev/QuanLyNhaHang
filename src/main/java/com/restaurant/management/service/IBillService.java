@@ -8,4 +8,5 @@ import java.util.List;
 public interface IBillService {
     List<BillDTO> getAllBillByUser(UserDTO userDTO);
     BillDTO getBillById(Long id);
+    BillDTO createBill(BillDTO billDTO, UserDTO userDTO);
 }

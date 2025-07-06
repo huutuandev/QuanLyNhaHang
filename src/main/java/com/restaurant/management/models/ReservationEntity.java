@@ -28,6 +28,12 @@ public class ReservationEntity {
     @Column(name = "ReservationDate")
     private LocalDate reservationDate;
 
+    @Column(name = "ReservationistName", length = 50)
+    private String reservationistName;
+
+    @Column(name = "ReservationistPhone", nullable = true, unique = true, length = 50)
+    private String reservationistPhone;
+
     @Column(name = "IsDeleted")
     private Boolean isDeleted = false;
 

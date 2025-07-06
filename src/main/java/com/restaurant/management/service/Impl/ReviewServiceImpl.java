@@ -50,4 +50,15 @@ public class ReviewServiceImpl implements IReviewService {
         return modelMapper.map(saved, ReviewDTO.class);
     }
 
+    @Override
+    public void deleteById(Long id, UserDTO userDTO) {
+        FoodReviewEntity review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bình luận có id = " + id));
+
+        if (review.getUser().getId() != userDTO.getId()) {
+            throw new RuntimeException("Bạn không thể xóa bình luận của người khác");
+        }
+        reviewRepository.deleteById(id);
+    }
+
 }

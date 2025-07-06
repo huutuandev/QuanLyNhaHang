@@ -16,6 +16,8 @@ import java.util.List;
 public class ReservationDTO {
     private Long id;
     private Long tableId;
+    private String reservationistName;
+    private String reservationistPhone;
     private LocalDate reservationDate;
     private LocalTime reservationTime;
     private Integer numberOfGuests;
