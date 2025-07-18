@@ -33,6 +33,9 @@ public class FoodEntity {
     @Column(name = "ImageUrl", length = 255)
     private String imageUrl;
 
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
+
     @ManyToOne
     @JoinColumn(name = "CategoryId")
     private FoodCategoryEntity category;

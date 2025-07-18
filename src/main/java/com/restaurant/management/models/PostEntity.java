@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "Title")
     private String title;
@@ -23,6 +23,9 @@ public class PostEntity {
 
     @Column(name = "ImageUrl")
     private String imageUrl;
+
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "AuthorId")

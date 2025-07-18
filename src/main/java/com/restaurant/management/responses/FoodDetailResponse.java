@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class FoodDetailResponse {
-
     private FoodDTO foodDTO;
     private List<ReviewDTO> reviews;
     private List<FoodDTO> relatedFoods;

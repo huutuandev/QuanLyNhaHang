@@ -10,8 +10,10 @@ import java.util.List;
 
 public interface IReservationService {
     ReservationDTO createOrUpdate(UserDTO userDTO, ReservationDTO dto);
-    ReservationDTO getById(Integer id);
+    ReservationDTO getById(Long id);
     void delete(Long id);
     List<ReservationDTO> getAllByUser(Long userId);
     List<UnavailableTableResponse> getUnavailableTablesWithTime(LocalDate date);
+    List<ReservationDTO> getAllReservations();
+    ReservationDTO updateStatus(Long reservationId, String newStatus);
 }

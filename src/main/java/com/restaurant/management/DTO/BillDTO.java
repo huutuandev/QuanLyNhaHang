@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 public class BillDTO {
     private Long Id;
     private Long OrderId;
+    private Long ReservationId;
     private Double TotalAmount;
+    private Double paidAmount;
     private String PaymentMethod;
 }

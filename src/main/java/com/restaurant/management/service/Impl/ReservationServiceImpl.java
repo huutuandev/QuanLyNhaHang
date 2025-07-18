@@ -3,13 +3,11 @@ package com.restaurant.management.service.Impl;
 import com.restaurant.management.DTO.ReservationDTO;
 import com.restaurant.management.DTO.ReservationOrderDTO;
 import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.ReservationEntity;
 import com.restaurant.management.models.ReservationOrderEntity;
 import com.restaurant.management.responses.UnavailableTableResponse;
-import com.restaurant.management.respository.FoodRepository;
-import com.restaurant.management.respository.ReservationRepository;
-import com.restaurant.management.respository.TableRepository;
-import com.restaurant.management.respository.UserRepository;
+import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,6 +30,7 @@ public class ReservationServiceImpl implements IReservationService {
     private final UserRepository userRepo;
     private final TableRepository tableRepo;
     private final FoodRepository foodRepo;
+    private final BillRepository billRepo;
     private final ModelMapper modelMapper;
 
     @Override
@@ -51,6 +50,8 @@ public class ReservationServiceImpl implements IReservationService {
         return modelMapper.map(saved, ReservationDTO.class);
     }
     private void mapDtoToEntity(ReservationDTO dto, ReservationEntity reservation) {
+        reservation.setReservationistName(dto.getReservationistName());
+        reservation.setReservationistPhone(dto.getReservationistPhone());
         reservation.setReservationDate(dto.getReservationDate());
         reservation.setReservationTime(dto.getReservationTime());
         reservation.setNumberOfGuests(dto.getNumberOfGuests());
@@ -77,9 +78,9 @@ public class ReservationServiceImpl implements IReservationService {
         }
     }
     @Override
-    public ReservationDTO getById(Integer id) {
+    public ReservationDTO getById(Long id) {
         ReservationEntity reservation = reservationRepo.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found with id"+ id));
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id: "+ id));
         return modelMapper.map(reservation, ReservationDTO.class);
     }
 
@@ -114,6 +115,30 @@ public class ReservationServiceImpl implements IReservationService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ReservationDTO> getAllReservations() {
+        List<ReservationEntity> list = reservationRepo.findAllByIsDeletedFalse();
+        return list.stream().map(reservationEntity ->
+                modelMapper.map(reservationEntity,ReservationDTO.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public ReservationDTO updateStatus(Long reservationId, String newStatus) {
+        ReservationEntity reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Lỗi không phân định"));
+        reservation.setStatus(newStatus);
+        if ("Completed".equalsIgnoreCase(newStatus)) {
+            BillEntity bill = billRepo.findByReservationId(reservationId);
+            if (bill != null && bill.getPaidAmount() < bill.getTotalAmount()) {
+                bill.setPaidAmount(bill.getTotalAmount());
+                billRepo.save(bill);
+            }
+        }
+        reservationRepo.save(reservation);
+        return modelMapper.map(reservation, ReservationDTO.class);
+    }
+
     private void checkTimeSlotConflict(ReservationDTO dto) {
         Long currentId = dto.getId() != null ? dto.getId() : -1L;
         List<ReservationEntity> existingReservations = reservationRepo.findAllByTableAndDate(

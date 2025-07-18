@@ -1,13 +1,13 @@
 package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.TableDTO;
+import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,8 +19,16 @@ public class TableController {
     private final ITableService tableService;
 
     @GetMapping
-    public ResponseEntity<List<TableDTO>> getAllTables(){
-        List<TableDTO> tableDTOS = tableService.getAllTables();
-        return ResponseEntity.ok(tableDTOS);
+    public ResponseEntity<PagedResponse<TableDTO>> getAllTables(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size){
+
+        Page<TableDTO> tableDTOPage = tableService.getAllTables(page,size);
+        return ResponseEntity.ok(new PagedResponse<>(tableDTOPage,tableDTOPage.getContent()));
+    }
+    @PostMapping
+    public ResponseEntity<?> createOrUpdateTable(@RequestBody TableDTO tableDTO){
+        tableService.createOrUpdateTable(tableDTO);
+        return ResponseEntity.ok("Thành Công");
     }
 }

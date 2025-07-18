@@ -2,6 +2,7 @@ package com.restaurant.management.models;
 
 import lombok.*;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,5 +31,10 @@ public class TableEntity {
 
     @OneToMany(mappedBy = "table")
     private List<ChatSessionEntity> chatSessions = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) status = "Available";
+    }
 }
 

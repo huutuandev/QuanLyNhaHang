@@ -1,6 +1,5 @@
     package com.restaurant.management.DTO;
 
-    import com.fasterxml.jackson.annotation.JsonIgnore;
     import lombok.AllArgsConstructor;
     import lombok.Builder;
     import lombok.Data;
@@ -12,9 +11,9 @@
     @NoArgsConstructor
     @Builder
     public class PostDTO {
-        private Integer Id;
-        private String Title;
-        private String Content;
-        private String ImagUrl;
-        private String AuthorName;
+        private Long id;
+        private String title;
+        private String content;
+        private String imageUrl;
+        private String authorName;
     }

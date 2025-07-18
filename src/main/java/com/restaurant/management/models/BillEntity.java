@@ -19,12 +19,20 @@ public class BillEntity {
     @JoinColumn(name = "OrderId")
     private OrderEntity order;
 
+    @OneToOne
+    @JoinColumn(name = "ReservationId", unique = false)
+    private ReservationEntity reservation;
+
+
     @ManyToOne
     @JoinColumn(name = "CashierId")
     private UserEntity cashier;
 
     @Column(name = "TotalAmount")
     private Double totalAmount;
+
+    @Column(name = "PaidAmount")
+    private Double paidAmount;
 
     @Column(name = "PaidAt")
     private LocalDateTime paidAt;

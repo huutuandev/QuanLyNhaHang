@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/reservations")
@@ -24,11 +25,11 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<ReservationDTO> createOrUpdate(@AuthenticationPrincipal UserDTO user, @RequestBody ReservationDTO dto) {
-        return ResponseEntity.ok(reservationService.createOrUpdate(user,dto));
+        return ResponseEntity.ok(reservationService.createOrUpdate(user, dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReservationDTO> get(@PathVariable Integer id) {
+    public ResponseEntity<ReservationDTO> get(@PathVariable Long id) {
         return ResponseEntity.ok(reservationService.getById(id));
     }
 
@@ -38,7 +39,7 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @GetMapping("/my")
     public ResponseEntity<List<ReservationDTO>> getAll(@AuthenticationPrincipal UserDTO user) {
         return ResponseEntity.ok(reservationService.getAllByUser(user.getId()));
     }
@@ -49,5 +50,21 @@ public class ReservationController {
     ) {
         List<UnavailableTableResponse> result = reservationService.getUnavailableTablesWithTime(date);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReservationDTO>> getAllReservations() {
+        List<ReservationDTO> reservationDTOS = reservationService.getAllReservations();
+        return ResponseEntity.ok(reservationDTOS);
+    }
+
+    @PostMapping("/{id}/status")
+    public ResponseEntity<ReservationDTO> updateStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body
+    ) {
+        String status = body.get("status");
+        ReservationDTO updated = reservationService.updateStatus(id, status);
+        return ResponseEntity.ok(updated);
     }
 }

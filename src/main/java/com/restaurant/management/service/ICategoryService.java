@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface ICategoryService {
     List<FoodCategoryDTO> findAll();
-    FoodCategoryDTO findByIdWithFoods(Integer id, int page, int size);
+    FoodCategoryDTO findByIdWithFoods(Long id, int page, int size);
+    FoodCategoryDTO createOrUpdate(FoodCategoryDTO foodCategoryDTO);
+    void deleteById(Long id);
 }

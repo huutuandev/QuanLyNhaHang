@@ -21,6 +21,10 @@ public class ReservationEntity {
     @JoinColumn(name = "CustomerId")
     private UserEntity customer;
 
+    @OneToOne(mappedBy = "reservation")
+    private BillEntity bill;
+
+
     @ManyToOne
     @JoinColumn(name = "TableId")
     private TableEntity table;

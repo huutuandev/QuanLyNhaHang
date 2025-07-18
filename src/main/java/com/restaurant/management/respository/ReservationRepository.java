@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
-    Optional<ReservationEntity> findByIdAndIsDeletedFalse(Integer id);
+    Optional<ReservationEntity> findByIdAndIsDeletedFalse(Long id);
+    List<ReservationEntity> findAllByIsDeletedFalse();
 
     @Query("SELECT r FROM ReservationEntity r WHERE r.customer.id = :customerId AND r.isDeleted = false")
     List<ReservationEntity> findByCustomerId(@Param("customerId") Long customerId);

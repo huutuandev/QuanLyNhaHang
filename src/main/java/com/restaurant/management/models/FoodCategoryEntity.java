@@ -18,10 +18,14 @@ import java.util.List;
 public class FoodCategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
+
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
+
 
     @OneToMany(mappedBy = "category", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private List<FoodEntity> foods = new ArrayList<>();

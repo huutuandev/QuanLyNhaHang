@@ -3,6 +3,7 @@ package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.FoodCategoryDTO;
 import com.restaurant.management.responses.FoodDetailResponse;
+import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.service.ICategoryService;
 import com.restaurant.management.service.IFoodService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FoodCategoryDTO> getCategoryById(@PathVariable Integer id,
+    public ResponseEntity<FoodCategoryDTO> getCategoryById(@PathVariable Long id,
                                                            @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "4") int size)
     {
@@ -42,4 +43,15 @@ public class CategoryController {
         return ResponseEntity.ok(foodDetailResponse);
     }
 
+    @PostMapping
+    public ResponseEntity<?> createOrUpdate(@RequestBody FoodCategoryDTO foodCategoryDTO){
+            categoryService.createOrUpdate(foodCategoryDTO);
+            return ResponseEntity.ok("Ok");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        categoryService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -2,10 +2,14 @@ package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.DTO.TableDTO;
 import com.restaurant.management.models.TableEntity;
+import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.respository.TableRepository;
 import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,11 +24,27 @@ public class TableServiceImpl implements ITableService {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<TableDTO> getAllTables() {
-        List<TableEntity> tableEntities = tableRepository.findAll();
-
-        return tableEntities.stream()
-                .map(entity -> modelMapper.map(entity,TableDTO.class))
-                .collect(Collectors.toList());
+    public Page<TableDTO> getAllTables(int page, int size ) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<TableEntity> tableEntities = tableRepository.findAll(pageable);
+        return tableEntities.map(tableEntity -> modelMapper.map(tableEntity,TableDTO.class));
     }
+
+    @Override
+    public TableDTO createOrUpdateTable(TableDTO dto) {
+        TableEntity table;
+        if (dto.getId() != null) {
+            table = tableRepository.findById(dto.getId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy bàn với ID: " + dto.getId()));
+            modelMapper.map(dto, table);
+        } else {
+            table = modelMapper.map(dto, TableEntity.class);
+        }
+        if (table.getStatus() == null) {
+            table.setStatus("Available");
+        }
+        TableEntity saved = tableRepository.save(table);
+        return modelMapper.map(saved, TableDTO.class);
+    }
+
 }
