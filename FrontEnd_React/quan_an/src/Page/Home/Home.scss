@@ -1,0 +1,365 @@
+$highlight: linear-gradient(to right, #2e4e7b, #0e1a2b);
+
+.Main {
+    background-color: rgb(233 230 230 / 49%);
+
+    .content1 {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: space-between;
+        padding: 80px;
+        background: linear-gradient(to right, #2e4e7b, #0e1a2b);
+
+        &__text {
+            color: white;
+            max-width: 600px;
+            display: flex;
+            // align-items: center;
+            flex-wrap: wrap;
+
+            h1 {
+                margin: 0;
+                font-size: 36px;
+                font-weight: bold;
+            }
+
+            p {
+                margin: 20px 0;
+                line-height: 1.6;
+            }
+
+            .btn-cta {
+                background: #ffa500;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        }
+
+        &__image {
+            max-width: max-content;
+
+            img {
+                height: 300px;
+                width: 300px;
+                border-radius: 100%;
+            }
+        }
+    }
+
+    .content2 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 40px;
+        justify-items: center;
+        align-items: center;
+
+        &__box {
+            max-width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-height: 220px;
+
+            .icon {
+                font-size: 50px;
+                margin-bottom: 15px;
+                color: #000;
+            }
+
+            .title {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                color: #000;
+            }
+
+            .text {
+                font-size: 14px;
+                color: #333;
+            }
+
+            &:hover {
+                background: $highlight;
+                color: white;
+
+                .icon,
+                .title,
+                .text {
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .content3 {
+        padding: 40px 20px;
+        background-color: #f5f7fa;
+
+        &__MenuNew {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        &__after {
+            margin-bottom: 30px;
+
+            .title_Home {
+                display: block;
+                font-size: 24px;
+                font-weight: 600;
+                color: #e26d26;
+                margin-bottom: 5px;
+            }
+
+            h3 {
+                margin-top: 5px;
+                margin-bottom: 15px;
+                font-size: 32px;
+                font-weight: 700;
+                color: #333;
+                position: relative;
+                display: inline-block;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    width: 40px;
+                    height: 3px;
+                    background-color: #ffaf40;
+                    left: 50%;
+                    bottom: -10px;
+                    transform: translateX(-50%);
+                }
+            }
+        }
+
+        &__before {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            justify-content: center;
+
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        &__box {
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            text-align: center;
+
+            &:hover {
+                transform: translateY(-5px);
+            }
+
+            .image {
+                width: 100%;
+                height: 180px;
+                overflow: hidden;
+                position: relative;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+
+                .tag_new {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background-color: #ff3b3f;
+                    color: #fff;
+                    font-size: 12px;
+                    font-weight: bold;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    z-index: 2;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                }
+            }
+
+            .text-price {
+                padding: 16px;
+
+                p {
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin: 0 0 8px;
+                    color: #222;
+                }
+
+                span {
+                    font-size: 16px;
+                    color: #f57c00;
+                    font-weight: 500;
+                }
+            }
+        }
+
+    }
+
+    .content4 {
+        padding: 60px;
+        background: #fff;
+
+        &__container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        &__text {
+            flex: 1;
+            max-width: 500px;
+
+            .label {
+                font-size: 24px;
+                font-weight: 700;
+                color: #e29d18;
+                display: block;
+                border-left: 5px solid #e29d18;
+                padding-left: 10px;
+                margin-bottom: 12px;
+            }
+
+            h2 {
+                font-size: 32px;
+                font-weight: 800;
+                color: #222;
+                margin-bottom: 20px;
+            }
+
+            p {
+                margin-bottom: 14px;
+                line-height: 1.6;
+                color: #333;
+            }
+
+            .btn-booking {
+                margin-top: 20px;
+                padding: 12px 20px;
+                font-size: 16px;
+                font-weight: bold;
+                background: white;
+                border: 2px solid black;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: 0.3s ease;
+
+                i {
+                    margin-left: 8px;
+                }
+
+                &:hover {
+                    background: #000;
+                    color: white;
+                }
+            }
+        }
+
+        &__image {
+            position: relative;
+            flex: 1;
+            max-width: 500px;
+
+            img {
+                width: 100%;
+                border-radius: 20px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+
+    .content5 {
+        padding: 40px 20px;
+        background-color: #f9f9f9;
+        text-align: center;
+
+        .review-slider {
+            overflow: hidden;
+            height: 150px;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .review-slide {
+            position: absolute;
+            width: 100%;
+            animation: slideIn 0.8s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateX(0%);
+                opacity: 1;
+            }
+        }
+    }
+
+    .top-rated {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        img {
+            max-width: 300px;
+            border-radius: 12px;
+        }
+
+        .info {
+            margin-top: 10px;
+
+            h3 {
+                font-size: 24px;
+            }
+
+            strong {
+                color: #e26d00;
+            }
+        }
+    }
+
+    .reviews {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .review-box {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+}
