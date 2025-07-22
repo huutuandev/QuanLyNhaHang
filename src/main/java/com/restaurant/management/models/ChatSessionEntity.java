@@ -13,7 +13,7 @@ import java.util.*;
 public class ChatSessionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "TableId")

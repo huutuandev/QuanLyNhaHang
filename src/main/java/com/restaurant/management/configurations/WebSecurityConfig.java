@@ -32,32 +32,40 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                new AntPathRequestMatcher(String.format("%s/users/register", apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/users/login", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/auth/register", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/auth/login", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/categories",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/posts/*",apiPrefix),"GET"),
-                                new AntPathRequestMatcher(String.format("%s/categories/**",apiPrefix),"GET"),
+                                new AntPathRequestMatcher(String.format("%s/categories/*",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET"),
-                                new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET")
+                                new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET"),
+                                new AntPathRequestMatcher("/chat-websocket/**")
                         )
                         .permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher(String.format("%s/users/me", apiPrefix), "GET"),
                                 new AntPathRequestMatcher(String.format("%s/reservations", apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/reservations/*", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/bills",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/bills/**",apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/review",apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/review/**",apiPrefix))
+                                new AntPathRequestMatcher(String.format("%s/review/**",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/users/profile", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/users/change-password", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/momo/**", apiPrefix),"POST")
                         ).hasAnyRole(RoleConstants.USER)
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/categories",apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/reservations", apiPrefix),"GET"),
+                                new AntPathRequestMatcher(String.format("%s/reservations/{id}/status", apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"POST"),
-                                new AntPathRequestMatcher(String.format("%s/foods",apiPrefix))
+                                new AntPathRequestMatcher(String.format("%s/foods",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/dashboard/**",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/users/**", apiPrefix))
                         ).hasAnyRole(RoleConstants.ADMIN)
+                        .requestMatchers(
+                                new AntPathRequestMatcher(String.format("%s/orders/**",apiPrefix))
+                        ).hasAnyRole(RoleConstants.STAFF)
                         .anyRequest().authenticated()
                 );
 

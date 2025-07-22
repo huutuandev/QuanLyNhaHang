@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class BillController {
         return ResponseEntity.ok(billDTO);
     }
     @PostMapping
-    public ResponseEntity<?> createBill(@RequestBody BillDTO billDTO,@AuthenticationPrincipal UserDTO userDTO){
+    public ResponseEntity<?> createBill(@Valid @RequestBody BillDTO billDTO, @AuthenticationPrincipal UserDTO userDTO){
             billService.createBill(billDTO,userDTO);
             return ResponseEntity.ok("Thành Công");
     }

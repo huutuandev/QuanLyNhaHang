@@ -12,6 +12,9 @@ import com.restaurant.management.service.IFoodService;
 import com.restaurant.management.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -116,10 +119,10 @@ public class FoodServiceImpl implements IFoodService {
     }
 
     @Override
-    public List<FoodDTO> getAllFoods() {
-        List<FoodEntity> foodEntities = foodRepository.findAllByIsDeletedFalse();
-        return foodEntities.stream().map(foodEntity -> modelMapper.map(foodEntity, FoodDTO.class))
-                .collect(Collectors.toList());
+    public Page<FoodDTO> getAllFoods(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FoodEntity> foodpage = foodRepository.findAllByIsDeletedFalse(pageable);
+        return foodpage.map(foodEntity -> modelMapper.map(foodEntity, FoodDTO.class));
     }
 
     @Override

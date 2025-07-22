@@ -3,6 +3,7 @@ package com.restaurant.management.service.Impl;
 import com.restaurant.management.DTO.ReservationDTO;
 import com.restaurant.management.DTO.ReservationOrderDTO;
 import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.ReservationEntity;
 import com.restaurant.management.models.ReservationOrderEntity;
@@ -11,6 +12,9 @@ import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -85,9 +89,9 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void cancel(Long id) {
         ReservationEntity reservation = reservationRepo.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found with id"+ id));
-        reservation.setIsDeleted(true);
+        reservation.setStatus(ReservationStatusConstant.CANCELLED);
         reservationRepo.save(reservation);
     }
     @Override
@@ -100,7 +104,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public List<UnavailableTableResponse> getUnavailableTablesWithTime(LocalDate date) {
-        List<ReservationEntity> reservations = reservationRepo.findAllByReservationDate(date);
+        List<ReservationEntity> reservations = reservationRepo.findAllByReservationDateAndStatus(date, ReservationStatusConstant.CONFIRMED);
 
         return reservations.stream()
                 .filter(r -> !r.getIsDeleted())
@@ -117,10 +121,11 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public List<ReservationDTO> getAllReservations() {
-        List<ReservationEntity> list = reservationRepo.findAllByIsDeletedFalse();
-        return list.stream().map(reservationEntity ->
-                modelMapper.map(reservationEntity,ReservationDTO.class)).collect(Collectors.toList());
+    public Page<ReservationDTO> getAllReservations(int  page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<ReservationEntity> reservationpage = reservationRepo.findAllByIsDeletedFalse(pageable);
+        return reservationpage.map(reservationEntity ->
+                modelMapper.map(reservationEntity,ReservationDTO.class));
     }
 
     @Override
@@ -128,7 +133,7 @@ public class ReservationServiceImpl implements IReservationService {
         ReservationEntity reservation = reservationRepo.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Lỗi không phân định"));
         reservation.setStatus(newStatus);
-        if ("Completed".equalsIgnoreCase(newStatus)) {
+        if (ReservationStatusConstant.COMPLETED.equalsIgnoreCase(newStatus)) {
             BillEntity bill = billRepo.findByReservationId(reservationId);
             if (bill != null && bill.getPaidAmount() < bill.getTotalAmount()) {
                 bill.setPaidAmount(bill.getTotalAmount());

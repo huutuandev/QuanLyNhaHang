@@ -1,8 +1,9 @@
 package com.restaurant.management.service.Impl;
 
 
-import com.restaurant.management.DTO.MonthlyRevenueDTO;
-import com.restaurant.management.DTO.RevenueStatsDTO;
+import com.restaurant.management.requests.MonthlyRevenueRequest;
+import com.restaurant.management.requests.RevenueStatsRequest;
+import com.restaurant.management.requests.StatusCountRequest;
 import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IDashboardService;
@@ -20,6 +21,7 @@ public class DashboardServiceImpl implements IDashboardService {
     private final PostRepository postRepo;
     private final FoodRepository foodRepo;
     private final CategoryRepository categoryRepo;
+    private final ReservationRepository reservationRepo;
     private final BillRepository billRepo;
     private final OrderRepository orderRepo;
 
@@ -31,7 +33,7 @@ public class DashboardServiceImpl implements IDashboardService {
         long totalCategories = categoryRepo.count();
 
         int currentYear = LocalDate.now().getYear();
-        List<MonthlyRevenueDTO> monthlyRevenues = billRepo.sumMonthlyRevenue(currentYear);
+        List<MonthlyRevenueRequest> monthlyRevenues = billRepo.sumMonthlyRevenue(currentYear);
         return DashboardResponse.builder()
                 .totalUsers(totalUsers)
                 .totalPosts(totalPosts)
@@ -42,14 +44,24 @@ public class DashboardServiceImpl implements IDashboardService {
     }
 
     @Override
-    public RevenueStatsDTO getRevenueStats(LocalDate start, LocalDate end) {
+    public RevenueStatsRequest getRevenueStats(LocalDate start, LocalDate end) {
         Double totalRevenue = billRepo.sumTotalAmountBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
         Long totalOrders = orderRepo.countByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
-        return RevenueStatsDTO.builder()
+        return RevenueStatsRequest.builder()
                 .startDate(start)
                 .endDate(end)
                 .totalRevenue(totalRevenue)
                 .totalOrders(totalOrders)
                 .build();
+    }
+
+    @Override
+    public List<StatusCountRequest> countByYear(int year) {
+        return reservationRepo.countByYear(year);
+    }
+
+    @Override
+    public List<StatusCountRequest> countByMonth(int year, int month) {
+        return reservationRepo.countByMonth(year, month);
     }
 }

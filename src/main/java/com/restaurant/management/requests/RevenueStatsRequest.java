@@ -1,4 +1,4 @@
-package com.restaurant.management.DTO;
+package com.restaurant.management.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RevenueStatsDTO {
+public class RevenueStatsRequest {
     private LocalDate startDate;
     private LocalDate endDate;
     private Double totalRevenue;

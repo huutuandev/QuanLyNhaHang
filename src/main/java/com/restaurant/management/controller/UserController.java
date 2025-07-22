@@ -1,46 +1,52 @@
 package com.restaurant.management.controller;
 
+import com.restaurant.management.requests.ChangePasswordRequest;
 import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.DTO.UserLoginDTO;
-import com.restaurant.management.models.UserEntity;
 import com.restaurant.management.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
 @Validated
 public class UserController {
+
     private final IUserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO) {
-        try {
-            UserEntity newUser = userService.createUser(userDTO);
-            return ResponseEntity.ok("OK");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO loginDTO) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> createOrUpdate(@Valid @RequestBody UserDTO dto) {
+        return ResponseEntity.ok(userService.createOrUpdate(dto));
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getProfile(@AuthenticationPrincipal UserDTO user) {
+        return ResponseEntity.ok(user);
+    }
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest dto,
+                                            @AuthenticationPrincipal UserDTO userDTO) {
         try {
-            String token = userService.login(loginDTO);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            String phone = userDTO.getPhoneNumber();
+            userService.changePassword(phone, dto);
+            return ResponseEntity.ok("Đổi mật khẩu thành công");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
 }

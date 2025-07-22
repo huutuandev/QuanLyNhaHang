@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<?> creatOrUpdate(@RequestBody PostDTO postDTO, @AuthenticationPrincipal UserDTO userDTO){
+    public ResponseEntity<?> creatOrUpdate(@Valid @RequestBody PostDTO postDTO, @AuthenticationPrincipal UserDTO userDTO){
             postService.createOrUpdate(postDTO,userDTO);
             return ResponseEntity.ok("Tạo thành công");
     }

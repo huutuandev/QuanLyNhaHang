@@ -3,7 +3,6 @@ package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.FoodCategoryDTO;
 import com.restaurant.management.responses.FoodDetailResponse;
-import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.service.ICategoryService;
 import com.restaurant.management.service.IFoodService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrUpdate(@RequestBody FoodCategoryDTO foodCategoryDTO){
+    public ResponseEntity<?> createOrUpdate(@Valid @RequestBody FoodCategoryDTO foodCategoryDTO){
             categoryService.createOrUpdate(foodCategoryDTO);
             return ResponseEntity.ok("Ok");
     }

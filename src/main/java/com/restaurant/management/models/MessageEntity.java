@@ -13,11 +13,14 @@ import java.time.LocalDateTime;
 public class MessageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "ChatSessionId")
     private ChatSessionEntity chatSession;
+
+    @Column(name = "SenderName")
+    private String senderName;
 
     @ManyToOne
     @JoinColumn(name = "SenderId")

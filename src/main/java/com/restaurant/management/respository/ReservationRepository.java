@@ -1,6 +1,9 @@
 package com.restaurant.management.respository;
 
+import com.restaurant.management.requests.StatusCountRequest;
 import com.restaurant.management.models.ReservationEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,8 +29,25 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Param("date") LocalDate date,
             @Param("currentId") Long currentId
     );
+    @Query("SELECT new com.restaurant.management.requests.StatusCountRequest(r.status, COUNT(r)) " +
+            "FROM ReservationEntity r " +
+            "WHERE r.isDeleted = false AND FUNCTION('YEAR', r.reservationDate) = :year " +
+            "GROUP BY r.status")
+    List<StatusCountRequest> countByYear(@Param("year") int year);
 
-    List<ReservationEntity> findAllByReservationDate(LocalDate date);
+    @Query(
+            "SELECT new com.restaurant.management.requests.StatusCountRequest(" +
+                    "        r.status, COUNT(r) ) " +
+                    "FROM ReservationEntity r " +
+                    "WHERE r.isDeleted = false " +
+                    "  AND FUNCTION('YEAR',  r.reservationDate) = :year " +
+                    "  AND FUNCTION('MONTH', r.reservationDate) = :month " +
+                    "GROUP BY r.status"
+    )
+    List<StatusCountRequest> countByMonth(@Param("year") int year,
+                                          @Param("month") int month);
+    List<ReservationEntity> findAllByReservationDateAndStatus(LocalDate reservationDate, String status);
 
+    Page<ReservationEntity> findAllByIsDeletedFalse(Pageable pageable);
 
 }

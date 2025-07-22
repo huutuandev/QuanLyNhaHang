@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "phoneNumber", nullable = false, unique = true, length = 50)
     private String phoneNumber;
@@ -37,6 +37,12 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "Email", length = 100)
     private String email;
+
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted = false;
+
+    @Column(name = "ImageUrl", length = 255)
+    private String imageUrl;
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;

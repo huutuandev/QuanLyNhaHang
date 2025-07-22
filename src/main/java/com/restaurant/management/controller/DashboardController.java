@@ -1,6 +1,7 @@
 package com.restaurant.management.controller;
 
-import com.restaurant.management.DTO.RevenueStatsDTO;
+import com.restaurant.management.requests.RevenueStatsRequest;
+import com.restaurant.management.requests.StatusCountRequest;
 import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.service.IDashboardService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/dashboard")
@@ -28,10 +30,24 @@ public class DashboardController {
     }
 
     @GetMapping("/revenue")
-    public ResponseEntity<RevenueStatsDTO> getRevenue(
+    public ResponseEntity<RevenueStatsRequest> getRevenue(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
     ) {
         return ResponseEntity.ok(dashboardService.getRevenueStats(start, end));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<StatusCountRequest>> getReservationStatusStats(
+            @RequestParam Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
+        List<StatusCountRequest> stats;
+        if (month == null) {
+            stats = dashboardService.countByYear(year);
+        } else {
+            stats = dashboardService.countByMonth(year, month);
+        }
+        return ResponseEntity.ok(stats);
     }
 }

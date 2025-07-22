@@ -1,6 +1,6 @@
 package com.restaurant.management.responses;
 
-import com.restaurant.management.DTO.MonthlyRevenueDTO;
+import com.restaurant.management.requests.MonthlyRevenueRequest;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +13,6 @@ public class DashboardResponse {
     private long totalPosts;
     private long totalFoods;
     private long totalCategories;
-    private List<MonthlyRevenueDTO> monthlyRevenue;
+    private List<MonthlyRevenueRequest> monthlyRevenue;
 
 }

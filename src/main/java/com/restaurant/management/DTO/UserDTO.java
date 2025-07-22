@@ -27,6 +27,8 @@ public class UserDTO {
     @JsonProperty("retype_password")
     private String retypePassword;
 
+    private String imageUrl;
+
     @JsonProperty("role_ids")
     @NotNull(message = "Role ids are required")
     private List<Long> roleIds;

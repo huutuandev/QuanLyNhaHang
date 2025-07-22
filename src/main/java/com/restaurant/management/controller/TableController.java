@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class TableController {
         return ResponseEntity.ok(new PagedResponse<>(tableDTOPage,tableDTOPage.getContent()));
     }
     @PostMapping
-    public ResponseEntity<?> createOrUpdateTable(@RequestBody TableDTO tableDTO){
+    public ResponseEntity<?> createOrUpdateTable(@Valid @RequestBody TableDTO tableDTO){
         tableService.createOrUpdateTable(tableDTO);
         return ResponseEntity.ok("Thành Công");
     }

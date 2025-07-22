@@ -2,6 +2,7 @@ package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.DTO.ReviewDTO;
 import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.FoodReviewEntity;
 import com.restaurant.management.models.UserEntity;
@@ -26,7 +27,7 @@ public class ReviewServiceImpl implements IReviewService {
                 .existsByReservation_Customer_IdAndFood_IdAndReservation_Status(
                         userDTO.getId(),
                         reviewDTO.getFoodId(),
-                        "Confirmed"
+                        ReservationStatusConstant.CONFIRMED
                 );
         if (!hasOrdered) {
             throw new IllegalArgumentException("Bạn chưa từng đặt món này trong đơn đã xác nhận.");
