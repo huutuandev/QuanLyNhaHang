@@ -53,14 +53,13 @@ function Pay() {
                 numberOfGuests: reservationData.numberOfPeople,
                 note: reservationData.note || "",
                 status: "PENDING",
-                tableId: reservationData.tableId,
+                // tableId: reservationData.tableId,
                 orders: foods.map(food => ({
                     foodId: food.id,
                     quantity: food.quantity,
                     note: food.note || ""
                 }))
             };
-
             const response = await axios.post("/api/reservations", payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -69,26 +68,56 @@ function Pay() {
             });
 
             if (response.status === 200 || response.status === 201) {
-                alert("Đặt bàn thành công!");
-                localStorage.removeItem("order");
-                localStorage.removeItem("reservation");
-                navigate("/");
+                const reservationId = response.data.id;
+                localStorage.setItem("reservationId", reservationId);
+                console.log("Id đặt bàn:", reservationId);
+                const paymentRes = await axios.post("/api/momo/create-payment", {
+                    amount: Math.round(deposit),
+                    orderInfo: "Thanh toán tiền cọc đặt bàn"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+                const { data } = paymentRes;
+                if (typeof data === "string" && data.startsWith("https://")) {
+                    localStorage.setItem("totalAmount", Math.round(total));
+                    localStorage.setItem("paidAmount", Math.round(deposit));
+                    
+                    localStorage.removeItem("order");
+                    localStorage.removeItem("reservation");
+                    window.location.href = data;
+                }
+                else {
+                    alert("Không lấy được link thanh toán MOMO.");
+                }
             } else {
-                alert("Đặt bàn thất bại. Vui lòng thử lại.");
+                alert("Không lấy được link thanh toán MOMO.");
             }
         } catch (error) {
+            console.error(" Lỗi chi tiết:", error);
+
+            if (error.response) {
+                console.error(" Server trả về lỗi:", error.response.data);
+                console.error(" Status code:", error.response.status);
+
+                alert(` Lỗi ${error.response.status}: ${error.response.data?.message || "Không rõ lỗi"}`);
+            } else if (error.request) {
+                console.error("⚠️ Không nhận được phản hồi từ server:", error.request);
+                alert("Không có phản hồi từ máy chủ. Kiểm tra kết nối hoặc cấu hình API.");
+            } else {
+                console.error("⚙️ Lỗi thiết lập request:", error.message);
+                alert("Đã xảy ra lỗi không xác định.");
+            }
+
             if (error.response?.status === 401) {
                 alert("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
                 localStorage.removeItem("token");
                 navigate("/login");
-            } else {
-                console.error("Lỗi khi gửi đơn hàng:", error);
-                alert("Đã xảy ra lỗi khi gửi đơn hàng.");
             }
         }
     };
-
-
     return (
         <div className="Main_pay">
             <section className="content1-pay">
@@ -96,7 +125,7 @@ function Pay() {
                     <h1>Đặt bàn online</h1>
                     <NavLink to="/">Trang Chủ /</NavLink>
                     <NavLink to="/Table"> Đặt Bàn /</NavLink>
-                    <NavLink to="/SelectTable"> Chọn Bàn /</NavLink>
+                    {/* <NavLink to="/SelectTable"> Chọn Bàn /</NavLink> */}
                     <NavLink to="/SelectMenu"> Chọn Món /</NavLink>
                     <NavLink to="/pay"> Thanh toán</NavLink>
                 </div>

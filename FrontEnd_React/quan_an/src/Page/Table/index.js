@@ -6,7 +6,6 @@ import axios from "axios";
 function Table() {
   const navigate = useNavigate();
 
-  // Trạng thái form đặt bàn
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,7 +15,6 @@ function Table() {
     note: "",
   });
 
-  // Trạng thái hiển thị modal cảnh báo
   const [showLoginModal, setShowLoginModal] = useState(false);
   const getMinDateTime = () => {
     const now = new Date();
@@ -35,7 +33,7 @@ function Table() {
     if (!token) {
       setShowLoginModal(true);
     }
-    axios.get("/api/users/me", {
+    axios.get("/api/users/profile", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -51,7 +49,7 @@ function Table() {
       })
       .catch((err) => {
         console.error("Lỗi lấy thông tin người dùng:", err);
-        setShowLoginModal(true); // Nếu token hết hạn
+        setShowLoginModal(true); 
       });
   }, []);
 
@@ -94,7 +92,7 @@ function Table() {
     };
 
     localStorage.setItem("reservation", JSON.stringify(updatedFormData));
-    navigate("/SelectTable");
+    navigate("/SelectMenu");
   };
 
 
@@ -115,20 +113,20 @@ function Table() {
               <div className="circle">1</div>
               <div className="label">Điền thông tin</div>
             </div>
-            <div className="step">
+            {/* <div className="step">
               <div className="circle">2</div>
               <div className="label">Chọn bàn</div>
-            </div>
+            </div> */}
             <div className="step">
-              <div className="circle">3</div>
+              <div className="circle">2</div>
               <div className="label">Chọn món</div>
             </div>
             <div className="step">
-              <div className="circle">4</div>
+              <div className="circle">3</div>
               <div className="label">Thanh toán</div>
             </div>
             <div className="step">
-              <div className="circle">5</div>
+              <div className="circle">4</div>
               <div className="label">Xác nhận</div>
             </div>
           </div>

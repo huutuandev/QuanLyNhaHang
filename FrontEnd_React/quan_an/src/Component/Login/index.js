@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [isLogin, setIsLogin] = useState(true); // true: login, false: register
+  const [isLogin, setIsLogin] = useState(true); 
 
   // Đăng nhập
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -43,7 +43,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("/api/users/login", {
+      const response = await axios.post("/api/auth/login", {
         phoneNumber,
         password,
       });
@@ -51,7 +51,7 @@ function Login() {
       const { token } = response.data;
       localStorage.setItem("token", token);
 
-      const meResponse = await axios.get("/api/users/me", {
+      const meResponse = await axios.get("/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,7 +88,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("/api/users/register", {
+      const response = await axios.post("/api/auth/register", {
         fullname: `${lastName} ${firstName}`,
         phoneNumber,
         email,
@@ -98,7 +98,7 @@ function Login() {
       });
 
       toast.success("Đăng ký thành công!");
-      setIsLogin(true); // Chuyển về đăng nhập
+      setIsLogin(true);
     } catch (err) {
       const errorMessage =
         typeof err.response?.data === "string"

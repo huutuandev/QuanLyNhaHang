@@ -15,6 +15,7 @@ import SelectMenu from './Page/Table/SelectMenu';
 import Pay from './Page/Table/Pay';
 import DetailFoods from './Page/DetailFoods';
 import HistoryBooking from './Page/HistoryBooking';
+import PaymentSuccess from './Page/Table/PaymentSuccess';
 function App() {
   const isLoggedIn = !!localStorage.getItem('token');
   return (
@@ -28,14 +29,15 @@ function App() {
           <Route path="Orther" element={<Orther />} />
           <Route path="News" element={<News />} />
           <Route path="Table" element={<Table />} />
-          <Route path="/SelectTable" element={<SelectTable />} />
+          {/* <Route path="/SelectTable" element={<SelectTable />} /> */}
           <Route path="/SelectMenu" element={<SelectMenu />} />
-          <Route path="/pay" element={<Pay />}/>
-          <Route path='/DetailFoods' element={<DetailFoods/>}/>
-          <Route path='/HistoryBooking' element={<HistoryBooking/>}/>
+          <Route path="/pay" element={<Pay />} />
+          <Route path='/DetailFoods' element={<DetailFoods />} />
+          <Route path='/HistoryBooking' element={<HistoryBooking />} />
         </Route>
         <Route path="*" element={<Error />} />
         <Route path="Login" element={<Login />} />
+        <Route path='/payment-Success' element={<PaymentSuccess />} />
       </Routes>
     </>
   );

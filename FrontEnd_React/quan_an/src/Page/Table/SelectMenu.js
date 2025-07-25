@@ -83,7 +83,7 @@ function SelectMenu() {
                     <h1>Đặt bàn online</h1>
                     <NavLink to="/">Trang Chủ /</NavLink>
                     <NavLink to="/Table"> Đặt Bàn /</NavLink>
-                    <NavLink to="/SelectTable"> Chọn Bàn /</NavLink>
+                    {/* <NavLink to="/SelectTable"> Chọn Bàn /</NavLink> */}
                     <NavLink to="/SelectMenu"> Chọn Món</NavLink>
                 </div>
             </section>
