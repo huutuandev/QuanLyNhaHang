@@ -3,6 +3,7 @@ package com.restaurant.management.service.Impl;
 import com.restaurant.management.DTO.TableDTO;
 import com.restaurant.management.models.TableEntity;
 import com.restaurant.management.responses.PagedResponse;
+import com.restaurant.management.respository.ReservationRepository;
 import com.restaurant.management.respository.TableRepository;
 import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class TableServiceImpl implements ITableService {
 
     private final TableRepository tableRepository;
+    private final ReservationRepository reservationRepo;
     private final ModelMapper modelMapper;
 
     @Override
@@ -47,4 +50,13 @@ public class TableServiceImpl implements ITableService {
         return modelMapper.map(saved, TableDTO.class);
     }
 
+    // TableServiceImpl.java
+    @Override
+    public List<TableEntity> getAvailableTables(LocalDate date, Long excludeReservationId) {
+        List<TableEntity> allTables = tableRepository.findAll();
+        List<Long> occupiedTableIds = reservationRepo.findOccupiedTableIdsByDate(date, excludeReservationId);
+        return allTables.stream()
+                .filter(table -> !occupiedTableIds.contains(table.getId()))
+                .collect(Collectors.toList());
+    }
 }

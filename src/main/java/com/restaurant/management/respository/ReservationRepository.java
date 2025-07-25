@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
     Optional<ReservationEntity> findByIdAndIsDeletedFalse(Long id);
-    List<ReservationEntity> findAllByIsDeletedFalse();
 
     @Query("SELECT r FROM ReservationEntity r WHERE r.customer.id = :customerId AND r.isDeleted = false")
     List<ReservationEntity> findByCustomerId(@Param("customerId") Long customerId);
@@ -46,8 +45,14 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     )
     List<StatusCountRequest> countByMonth(@Param("year") int year,
                                           @Param("month") int month);
-    List<ReservationEntity> findAllByReservationDateAndStatus(LocalDate reservationDate, String status);
+    // ReservationRepository.java
+    @Query("SELECT r.table.id FROM ReservationEntity r " +
+            "WHERE r.reservationDate = :date " +
+            "AND (:excludeId IS NULL OR r.id != :excludeId)")
+    List<Long> findOccupiedTableIdsByDate(@Param("date") LocalDate date,
+                                          @Param("excludeId") Long excludeId);
 
     Page<ReservationEntity> findAllByIsDeletedFalse(Pageable pageable);
+    List<ReservationEntity> findAllByCustomerIdAndReservationDate(Long customerId, LocalDate reservationDate);
 
 }

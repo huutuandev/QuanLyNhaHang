@@ -47,13 +47,6 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getAllByUser(user.getId()));
     }
 
-    @GetMapping("/unavailable-tables")
-    public ResponseEntity<List<UnavailableTableResponse>> getUnavailableTables(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ) {
-        List<UnavailableTableResponse> result = reservationService.getUnavailableTablesWithTime(date);
-        return ResponseEntity.ok(result);
-    }
 
     @GetMapping
     public ResponseEntity<PagedResponse<ReservationDTO>> getAllReservations(

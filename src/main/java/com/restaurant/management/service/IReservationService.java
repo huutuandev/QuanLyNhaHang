@@ -14,7 +14,6 @@ public interface IReservationService {
     ReservationDTO getById(Long id);
     void cancel(Long id);
     List<ReservationDTO> getAllByUser(Long userId);
-    List<UnavailableTableResponse> getUnavailableTablesWithTime(LocalDate date);
     Page<ReservationDTO> getAllReservations(int page, int size);
     ReservationDTO updateStatus(Long reservationId, String newStatus);
 }

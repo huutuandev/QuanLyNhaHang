@@ -15,14 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 public class ReservationDTO {
     private Long id;
-    private Long tableId;
     private String reservationistName;
     private String reservationistPhone;
     private LocalDate reservationDate;
     private LocalTime reservationTime;
+    private Integer tableNumber;
     private Integer numberOfGuests;
     private String note;
     private String status;
+    private boolean paid;
     private List<ReservationOrderDTO> orders;
 }
 

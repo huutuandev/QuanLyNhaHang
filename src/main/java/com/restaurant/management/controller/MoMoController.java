@@ -29,20 +29,20 @@ public class MoMoController {
             return ResponseEntity.status(500).body("Tạo thanh toán thất bại");
         }
     }
-    @PostMapping("/ipn-handler")
-    public ResponseEntity<String> handleIpn(@RequestBody Map<String, Object> ipnData) {
-        log.info("Nhận IPN từ MoMo: {}", ipnData);
-        String orderId = (String) ipnData.get(MoMoParameterConstant.ORDER_ID);
-        Integer resultCode = (Integer) ipnData.get(MoMoParameterConstant.RESULT_CODE);
-
-        if (resultCode != null && resultCode == 0) {
-            System.out.println("Thành Công");
-            return ResponseEntity.ok("IPN received and handled successfully");
-
-        } else {
-            System.out.println("Thất bại");
-            return ResponseEntity.ok("IPN received but payment failed");
-        }
-    }
+//    @PostMapping("/ipn-handler")
+//    public ResponseEntity<String> handleIpn(@RequestBody Map<String, Object> ipnData) {
+//        log.info("Nhận IPN từ MoMo: {}", ipnData);
+//        String orderId = (String) ipnData.get(MoMoParameterConstant.ORDER_ID);
+//        Integer resultCode = (Integer) ipnData.get(MoMoParameterConstant.RESULT_CODE);
+//
+//        if (resultCode != null && resultCode == 0) {
+//            System.out.println("Thành Công");
+//            return ResponseEntity.ok("IPN received and handled successfully");
+//
+//        } else {
+//            System.out.println("Thất bại");
+//            return ResponseEntity.ok("IPN received but payment failed");
+//        }
+//    }
 
 }

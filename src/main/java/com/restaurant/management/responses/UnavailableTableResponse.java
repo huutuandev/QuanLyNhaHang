@@ -12,6 +12,5 @@ import java.time.LocalTime;
 public class UnavailableTableResponse {
     private Long tableId;
     private LocalTime startTime;
-    private LocalTime endTime;
 }
 
