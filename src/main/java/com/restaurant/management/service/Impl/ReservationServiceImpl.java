@@ -20,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -112,15 +113,19 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     @Override
-    public List<ReservationDTO> getAllByUser(Long userId) {
-        List<ReservationEntity> reservations = reservationRepo.findByCustomerId(userId);
-        return reservations.stream().map(entity -> {
+    public Page<ReservationDTO> getAllByUser(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("reservationDate").descending());
+        Page<ReservationEntity> reservationPage = reservationRepo.findByCustomerId(userId, pageable);
+
+        return reservationPage.map(entity -> {
             ReservationDTO dto = modelMapper.map(entity, ReservationDTO.class);
-            boolean isPaid = billRepo.existsByReservation_Id(entity.getId());
-            dto.setPaid(isPaid);
+            boolean isPaid = billRepo.existsByReservation_IdAndIsPaidTrue(entity.getId());
+            dto.setIsPaid(isPaid);
             return dto;
-        }).collect(Collectors.toList());
+        });
     }
+
+
 
     @Override
     public Page<ReservationDTO> getAllReservations(int page, int size) {

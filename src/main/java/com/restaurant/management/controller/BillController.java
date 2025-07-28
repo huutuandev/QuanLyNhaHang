@@ -2,6 +2,7 @@ package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.BillDTO;
 import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.service.IBillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,12 @@ public class BillController {
         return ResponseEntity.ok(billDTO);
     }
     @PostMapping
-    public ResponseEntity<?> createBill(@Valid @RequestBody BillDTO billDTO, @AuthenticationPrincipal UserDTO userDTO){
-            billService.createBill(billDTO,userDTO);
-            return ResponseEntity.ok("Thành Công");
+    public ResponseEntity<BillDTO> createBill(@Valid @RequestBody BillDTO billDTO, @AuthenticationPrincipal UserDTO userDTO){
+            return ResponseEntity.ok(billService.createBill(billDTO,userDTO));
     }
+    @PutMapping("/confirm-payment")
+    public ResponseEntity<BillDTO> confirmPayment(@RequestBody ConfirmPaymentRequest confirmPaymentRequest) {
+        return ResponseEntity.ok(billService.confirmPayment(confirmPaymentRequest));
+    }
+
 }

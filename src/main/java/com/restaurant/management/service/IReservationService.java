@@ -13,7 +13,7 @@ public interface IReservationService {
     ReservationDTO createOrUpdate(UserDTO userDTO, ReservationDTO dto);
     ReservationDTO getById(Long id);
     void cancel(Long id);
-    List<ReservationDTO> getAllByUser(Long userId);
+    Page<ReservationDTO> getAllByUser(Long userId, int page, int size);
     Page<ReservationDTO> getAllReservations(int page, int size);
     ReservationDTO updateStatus(Long reservationId, String newStatus);
 }

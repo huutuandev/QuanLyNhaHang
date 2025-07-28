@@ -43,8 +43,12 @@ public class ReservationController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<ReservationDTO>> getAllByUser(@AuthenticationPrincipal UserDTO user) {
-        return ResponseEntity.ok(reservationService.getAllByUser(user.getId()));
+    public ResponseEntity<PagedResponse<ReservationDTO>> getAllByUser(@AuthenticationPrincipal UserDTO user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<ReservationDTO> reservationDTOPage = reservationService.getAllByUser(user.getId(), page, size);
+        return ResponseEntity.ok(new PagedResponse<>(reservationDTOPage, reservationDTOPage.getContent()));
     }
 
 
@@ -57,7 +61,7 @@ public class ReservationController {
         return ResponseEntity.ok(new PagedResponse<>(reservationDTOPage, reservationDTOPage.getContent()));
     }
 
-    @PostMapping("/{id}/status")
+    @PutMapping("/{id}/status")
     public ResponseEntity<ReservationDTO> updateStatus(
             @PathVariable Long id,
             @RequestBody Map<String, String> body

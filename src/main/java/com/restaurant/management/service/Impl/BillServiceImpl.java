@@ -7,6 +7,7 @@ import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.OrderEntity;
 import com.restaurant.management.models.ReservationEntity;
 import com.restaurant.management.models.UserEntity;
+import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.respository.BillRepository;
 import com.restaurant.management.respository.OrderRepository;
 import com.restaurant.management.respository.ReservationRepository;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +59,7 @@ public class BillServiceImpl implements IBillService {
                 .cashier(user)
                 .totalAmount(billDTO.getTotalAmount())
                 .paidAmount(billDTO.getPaidAmount())
+                .isPaid(false)
                 .paymentMethod(billDTO.getPaymentMethod());
         if (hasOrder) {
             OrderEntity order = orderRepository.findById(billDTO.getOrderId())
@@ -77,5 +80,25 @@ public class BillServiceImpl implements IBillService {
         return modelMapper.map(saved, BillDTO.class);
     }
 
+    @Override
+    public BillDTO confirmPayment(ConfirmPaymentRequest confirmPaymentRequest) {
+        if (confirmPaymentRequest.getReservationId() == null) {
+            throw new IllegalArgumentException("reservationId không được để trống");
+        }
+        BillEntity bill = billRepository.findByReservationId(confirmPaymentRequest.getReservationId());
+        if (bill == null) {
+            throw new RuntimeException("Không tìm thấy hóa đơn cho đặt bàn này");
+        }
+        if (Boolean.TRUE.equals(bill.getIsPaid())) {
+            throw new RuntimeException("Hóa đơn đã được thanh toán");
+        }
+        bill.setIsPaid(true);
+        bill.setPaidAt(LocalDateTime.now());
 
+        if (confirmPaymentRequest.getPaymentMethod() != null) {
+            bill.setPaymentMethod(confirmPaymentRequest.getPaymentMethod());
+        }
+        BillEntity saved = billRepository.save(bill);
+        return modelMapper.map(saved, BillDTO.class);
+    }
 }

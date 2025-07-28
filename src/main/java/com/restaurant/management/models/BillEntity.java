@@ -34,6 +34,9 @@ public class BillEntity {
     @Column(name = "PaidAmount")
     private Double paidAmount;
 
+    @Column(name = "IsPaid", columnDefinition = "bit default 0")
+    private Boolean isPaid = false;
+
     @Column(name = "PaidAt")
     private LocalDateTime paidAt;
 

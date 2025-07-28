@@ -16,7 +16,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     Optional<ReservationEntity> findByIdAndIsDeletedFalse(Long id);
 
     @Query("SELECT r FROM ReservationEntity r WHERE r.customer.id = :customerId AND r.isDeleted = false")
-    List<ReservationEntity> findByCustomerId(@Param("customerId") Long customerId);
+    Page<ReservationEntity> findByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
 
     @Query("SELECT r FROM ReservationEntity r " +
             "WHERE r.table.id = :tableId " +
