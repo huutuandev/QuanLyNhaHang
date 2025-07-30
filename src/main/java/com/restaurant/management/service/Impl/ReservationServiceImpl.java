@@ -38,7 +38,6 @@ public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationRepository reservationRepo;
     private final UserRepository userRepo;
-    private final ITableService tableService;
     private final FoodRepository foodRepo;
     private final BillRepository billRepo;
     private final ModelMapper modelMapper;
@@ -54,16 +53,6 @@ public class ReservationServiceImpl implements IReservationService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userDTO.getId())));
         setReservationOrders(dto, reservation);
         checkUserAlreadyBookedOnDate(userDTO, dto);
-        Long excludeId = dto.getId() != null ? dto.getId() : -1L;
-        List<TableEntity> availableTables = tableService.getAvailableTables(
-                dto.getReservationDate(),
-                excludeId
-        );
-        if (availableTables.isEmpty()) {
-            throw new RuntimeException("Không còn bàn trống trong ngày này.");
-        }
-        TableEntity chosenTable = availableTables.get(new Random().nextInt(availableTables.size()));
-        reservation.setTable(chosenTable);
         ReservationEntity saved = reservationRepo.save(reservation);
         return modelMapper.map(saved, ReservationDTO.class);
     }

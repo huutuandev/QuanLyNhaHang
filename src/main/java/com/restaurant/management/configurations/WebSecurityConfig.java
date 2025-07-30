@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/users/profile", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/change-password", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/momo/**", apiPrefix),"POST")
-                        ).hasAnyRole(RoleConstants.USER)
+                        ).hasAnyRole(RoleConstants.USER, RoleConstants.ADMIN)
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/categories",apiPrefix),"POST"),
@@ -62,10 +62,10 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/foods",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/dashboard/**",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/**", apiPrefix))
-                        ).hasAnyRole(RoleConstants.ADMIN)
+                        ).hasRole(RoleConstants.ADMIN)
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/orders/**",apiPrefix))
-                        ).hasAnyRole(RoleConstants.STAFF)
+                        ).hasRole(RoleConstants.STAFF)
                         .anyRequest().authenticated()
                 );
 

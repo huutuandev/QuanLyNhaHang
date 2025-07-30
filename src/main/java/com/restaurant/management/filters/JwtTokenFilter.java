@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -76,14 +78,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if (needSetAuth) {
                     UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
+                    List<String> roles = userDetails.getAuthorities()
+                            .stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList());
                     if (jwtTokenUtil.validateToken(token, userDetails)) {
                         UserDTO userDTO = UserDTO.builder()
                                 .id(userDetails.getId())
                                 .fullName(userDetails.getFullName())
                                 .phoneNumber(userDetails.getPhoneNumber())
                                 .email(userDetails.getEmail())
+                                .roleNames(roles)
                                 .build();
-
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(userDTO, null, userDetails.getAuthorities());
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

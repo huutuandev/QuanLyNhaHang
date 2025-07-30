@@ -19,8 +19,8 @@ public class BillEntity {
     @JoinColumn(name = "OrderId")
     private OrderEntity order;
 
-    @OneToOne
-    @JoinColumn(name = "ReservationId", unique = false)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "ReservationId", unique =true)
     private ReservationEntity reservation;
 
 

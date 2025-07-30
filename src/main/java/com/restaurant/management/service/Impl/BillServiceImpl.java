@@ -3,23 +3,23 @@ package com.restaurant.management.service.Impl;
 import com.restaurant.management.DTO.BillDTO;
 import com.restaurant.management.DTO.UserDTO;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
-import com.restaurant.management.models.BillEntity;
-import com.restaurant.management.models.OrderEntity;
-import com.restaurant.management.models.ReservationEntity;
-import com.restaurant.management.models.UserEntity;
+import com.restaurant.management.models.*;
 import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.respository.BillRepository;
 import com.restaurant.management.respository.OrderRepository;
 import com.restaurant.management.respository.ReservationRepository;
 import com.restaurant.management.respository.UserRepository;
 import com.restaurant.management.service.IBillService;
+import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +29,7 @@ public class BillServiceImpl implements IBillService {
     private final BillRepository billRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ITableService tableService;
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
 
@@ -81,24 +82,56 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public BillDTO confirmPayment(ConfirmPaymentRequest confirmPaymentRequest) {
-        if (confirmPaymentRequest.getReservationId() == null) {
+    @Transactional
+    public BillDTO confirmPayment(ConfirmPaymentRequest request) {
+        Long reservationId = request.getReservationId();
+        if (reservationId == null) {
             throw new IllegalArgumentException("reservationId không được để trống");
         }
-        BillEntity bill = billRepository.findByReservationId(confirmPaymentRequest.getReservationId());
+        BillEntity bill = getUnpaidBillByReservationId(reservationId);
+        ReservationEntity reservation = getReservationById(reservationId);
+        bill.setIsPaid(true);
+        bill.setPaidAt(LocalDateTime.now());
+        assignTableToReservation(reservation);
+        bill.setReservation(reservation);
+
+        if (request.getPaymentMethod() != null) {
+            bill.setPaymentMethod(request.getPaymentMethod());
+        }
+
+        BillEntity savedBill = billRepository.save(bill);
+        return modelMapper.map(savedBill, BillDTO.class);
+    }
+
+    private BillEntity getUnpaidBillByReservationId(Long reservationId) {
+        BillEntity bill = billRepository.findByReservationId(reservationId);
         if (bill == null) {
             throw new RuntimeException("Không tìm thấy hóa đơn cho đặt bàn này");
         }
         if (Boolean.TRUE.equals(bill.getIsPaid())) {
             throw new RuntimeException("Hóa đơn đã được thanh toán");
         }
-        bill.setIsPaid(true);
-        bill.setPaidAt(LocalDateTime.now());
-
-        if (confirmPaymentRequest.getPaymentMethod() != null) {
-            bill.setPaymentMethod(confirmPaymentRequest.getPaymentMethod());
-        }
-        BillEntity saved = billRepository.save(bill);
-        return modelMapper.map(saved, BillDTO.class);
+        return bill;
     }
+
+    private ReservationEntity getReservationById(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Không tồn tại đơn đặt bàn"));
+    }
+
+    private void assignTableToReservation(ReservationEntity reservation) {
+        List<TableEntity> availableTables = tableService.getAvailableTables(
+                reservation.getReservationDate(),
+                reservation.getId()
+        );
+
+        if (availableTables.isEmpty()) {
+            throw new RuntimeException("Không còn bàn trống trong ngày này.");
+        }
+
+        TableEntity chosenTable = availableTables.get(new Random().nextInt(availableTables.size()));
+        reservation.setTable(chosenTable);
+    }
+
+
 }

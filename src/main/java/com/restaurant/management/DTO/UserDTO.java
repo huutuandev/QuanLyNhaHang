@@ -33,5 +33,7 @@ public class UserDTO {
     @NotNull(message = "Role ids are required")
     private List<Long> roleIds;
 
+    private List<String> roleNames;
+
     private String email;
 }

@@ -9,14 +9,17 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,13 @@ public class JwtTokenUtil {
     public String generateToken(UserEntity user) throws Exception {
         Map<String, Object> claims = new HashMap<>();
         claims.put("phoneNumber", user.getPhoneNumber());
+
+        // ✅ Thêm roles vào claims
+        List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        claims.put("roles", roles); // 👈 Thêm quyền vào token
+
         try {
             return Jwts.builder()
                     .setClaims(claims)
@@ -41,6 +51,7 @@ public class JwtTokenUtil {
             throw new InvalidParamException("Không thể tạo JWT token, lỗi: " + e.getMessage());
         }
     }
+
 
     private Key getSignInKey() {
         try {
