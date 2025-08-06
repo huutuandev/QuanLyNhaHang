@@ -12,19 +12,14 @@ function PaymentSuccess() {
 
         const token = localStorage.getItem("token");
         const reservationId = localStorage.getItem("reservationId");
-        const totalAmount = parseFloat(localStorage.getItem("totalAmount") || "0");
-        const paidAmount = parseFloat(localStorage.getItem("paidAmount") || "0");
-
         if (resultCode === "0" && reservationId && token) {
             const createBill = async () => {
                 try {
                     const payload = {
                         reservationId: parseInt(reservationId),
-                        totalAmount,
-                        paidAmount,
-                        paymentMethod: "MoMo"
+                        paymentMethod: "MoMo",
                     };
-                    const res = await axios.post("/api/bills", payload, {
+                    const res = await axios.put("/api/bills/confirm-payment", payload, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                             "Content-Type": "application/json"
@@ -32,12 +27,12 @@ function PaymentSuccess() {
                     });
                     if (res.status === 200 || res.status === 201) {
                         alert("Thanh toán và tạo hóa đơn thành công!");
-                        // 🧹 Xoá dữ liệu đã lưu
+                        
                         localStorage.removeItem("reservationId");
                         localStorage.removeItem("totalAmount");
                         localStorage.removeItem("paidAmount");
 
-                        navigate("/"); // hoặc navigate("/") tùy bạn
+                        navigate("/");
                     } else {
                         alert("Tạo hóa đơn thất bại.");
                         navigate("/");

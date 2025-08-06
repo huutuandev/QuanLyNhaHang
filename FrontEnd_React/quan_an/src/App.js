@@ -10,12 +10,24 @@ import Layout from './Layout';
 import News from './Page/News';
 import Login from './Component/Login';
 import Table from './Page/Table';
-import SelectTable from './Page/Table/SelectTable';
+// import SelectTable from './Page/Table/SelectTable';
 import SelectMenu from './Page/Table/SelectMenu';
 import Pay from './Page/Table/Pay';
 import DetailFoods from './Page/DetailFoods';
-import HistoryBooking from './Page/HistoryBooking';
+import ReservationHistory from './Page/HistoryBooking';
 import PaymentSuccess from './Page/Table/PaymentSuccess';
+import LayoutAdmin from './PageAdmin/LayOutAdmin';
+import GridDashboard from './PageAdmin/page/Dashboard/Grid-Dashboard';
+import GridPosts from './PageAdmin/page/Post-Manage/Grid-Post';
+import GridUsers from './PageAdmin/page/User-Manager/Grid-User';
+import GridReservation from './PageAdmin/page/Reservation- Manage/Grid-Reservation';
+import GridCustomer from './PageAdmin/page/Customer-Consulting/Grid-Customer';
+import FoodCategory from './PageAdmin/page/Food-Manager/Food-Category';
+import DeletedFood from './PageAdmin/page/Food-Manager/Deleted-Food';
+import ListFood from './PageAdmin/page/Food-Manager/List-Food';
+import AddFood from './PageAdmin/page/Food-Manager/AddFood';
+import AddCatagory from './PageAdmin/page/Food-Manager/AddCatagory';
+
 function App() {
   const isLoggedIn = !!localStorage.getItem('token');
   return (
@@ -33,12 +45,34 @@ function App() {
           <Route path="/SelectMenu" element={<SelectMenu />} />
           <Route path="/pay" element={<Pay />} />
           <Route path='/DetailFoods' element={<DetailFoods />} />
-          <Route path='/HistoryBooking' element={<HistoryBooking />} />
+          <Route path='/ReservationHistory' element={<ReservationHistory />} />
         </Route>
+
+        {/* trang admin */}
+        <Route path="/admin" element={<LayoutAdmin />}>
+          <Route index element={<GridDashboard />} />
+          <Route path="Food-Category" element={<FoodCategory />} />
+          <Route path="Food-List" element={<ListFood />} />
+          <Route path="Add-Food" element={<AddFood />} />
+          <Route path="Add-Catagory" element={<AddCatagory/>}/>
+          <Route path="Delete-Food" element={<DeletedFood />} />
+          <Route path="Post-Manager" element={<GridPosts />} />
+          <Route path="Account-Manager" element={<GridUsers />} />
+          <Route path="Booking-Manager" element={<GridReservation />} />
+          <Route path="Customer-Support" element={<GridCustomer />} />
+        </Route>
+
         <Route path="*" element={<Error />} />
         <Route path="Login" element={<Login />} />
         <Route path='/payment-Success' element={<PaymentSuccess />} />
       </Routes>
+      {/* <Routes>
+        <Route path="/admin" element={<LayoutAdmin />}>
+          <Route index element={<GridDashboard />} />
+          {/* <Route path="foods" element={<QuanLyMonAn />} />
+          <Route path="posts" element={<QuanLyBaiViet />} /> */}
+      {/* </Route>
+      // </Routes> */}
     </>
   );
 }

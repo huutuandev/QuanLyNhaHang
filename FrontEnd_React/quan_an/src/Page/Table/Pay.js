@@ -28,48 +28,34 @@ function Pay() {
 
     const handleConfirmPayment = async () => {
         const token = localStorage.getItem("token");
-        console.log("Token hiện tại:", token);
-
         if (!token) {
-            alert("Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.");
+            alert("Bạn chưa đăng nhập.");
             navigate("/login");
             return;
         }
 
-        if (!orderData.foods || orderData.foods.length === 0) {
-            alert("Đơn hàng trống. Vui lòng chọn món trước.");
-            return;
-        }
+        const reservationId = localStorage.getItem("reservationId");
 
-        if (!reservationData.date || !reservationData.time || !reservationData.tableId) {
-            alert("Thông tin đặt bàn chưa đầy đủ.");
+        if (!reservationId) {
+            alert("Thiếu thông tin để thanh toán.");
             return;
         }
 
         try {
             const payload = {
-                reservationDate: reservationData.date,
-                reservationTime: reservationData.time || "",
-                numberOfGuests: reservationData.numberOfPeople,
-                note: reservationData.note || "",
-                status: "PENDING",
-                // tableId: reservationData.tableId,
-                orders: foods.map(food => ({
-                    foodId: food.id,
-                    quantity: food.quantity,
-                    note: food.note || ""
-                }))
+                reservationId: Number(reservationId),
+                totalAmount:parseFloat(total),
+                paidAmount:parseFloat(deposit),
             };
-            const response = await axios.post("/api/reservations", payload, {
+
+            const response = await axios.post("/api/bills", payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
+                    "Content-Type": "application/json",
+                },
             });
 
             if (response.status === 200 || response.status === 201) {
-                const reservationId = response.data.id;
-                localStorage.setItem("reservationId", reservationId);
                 console.log("Id đặt bàn:", reservationId);
                 const paymentRes = await axios.post("/api/momo/create-payment", {
                     amount: Math.round(deposit),
@@ -84,9 +70,9 @@ function Pay() {
                 if (typeof data === "string" && data.startsWith("https://")) {
                     localStorage.setItem("totalAmount", Math.round(total));
                     localStorage.setItem("paidAmount", Math.round(deposit));
-                    
+
                     localStorage.removeItem("order");
-                    localStorage.removeItem("reservation");
+                    // localStorage.removeItem("reservation");
                     window.location.href = data;
                 }
                 else {
@@ -104,10 +90,10 @@ function Pay() {
 
                 alert(` Lỗi ${error.response.status}: ${error.response.data?.message || "Không rõ lỗi"}`);
             } else if (error.request) {
-                console.error("⚠️ Không nhận được phản hồi từ server:", error.request);
+                console.error(" Không nhận được phản hồi từ server:", error.request);
                 alert("Không có phản hồi từ máy chủ. Kiểm tra kết nối hoặc cấu hình API.");
             } else {
-                console.error("⚙️ Lỗi thiết lập request:", error.message);
+                console.error(" Lỗi thiết lập request:", error.message);
                 alert("Đã xảy ra lỗi không xác định.");
             }
 

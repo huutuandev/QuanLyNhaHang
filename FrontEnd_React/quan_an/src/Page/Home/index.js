@@ -161,7 +161,7 @@ function Home() {
                         </div>
                     </section>
                 )}
-            </div >S
+            </div >
         </>
     )
 }

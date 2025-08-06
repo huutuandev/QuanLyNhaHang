@@ -1,0 +1,49 @@
+
+.mt-20{
+    margin-top: 20px;
+    background-color: #fff;
+}
+.food-category-container {
+  margin: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  .ant-table {
+    .ant-tag {
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .ant-btn {
+      border-radius: 4px;
+    }
+  }
+}
+.food-category-container {
+  background: #fff; // nền trắng giống trang Món Ăn
+  padding: 20px;
+  border-radius: 6px;
+}
+
+.food-category-container table {
+  background-color: #fff;
+}
+
+.food-category-container .ant-btn-dangerous {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+

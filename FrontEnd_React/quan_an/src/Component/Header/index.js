@@ -10,6 +10,24 @@ function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
+  //chức năng cuộn của thanh header
+  const [ showHeader, setShowHeader ] = useState(true);
+  const lastScrolly=useRef(0);
+  useEffect(()=>{
+    const handleScroll=()=>{
+      const currentScrolly=window.scrollY;
+      if(currentScrolly>lastScrolly.current&&currentScrolly>59){
+        setShowHeader(false);
+      }
+      else{
+        setShowHeader(true);
+      }
+      lastScrolly.current=currentScrolly;
+    };
+    window.addEventListener("scroll",handleScroll);
+    return()=>window.removeEventListener("scroll",handleScroll);
+  },[]);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const name = localStorage.getItem("userName");
@@ -41,7 +59,7 @@ function Header() {
   }, []);
 
   return (
-    <div className="header">
+    <div className={`header ${showHeader ?"show":"hide"}`}>
       <div className="header__left">
         <GrRestaurant className="header__logo" />
         <span className="header__brand">THT</span>
@@ -69,7 +87,7 @@ function Header() {
                 <Link to="/Account">
                   <div className="header__dropdown-item">Tài khoản của tôi</div>
                 </Link>
-                <Link to="/HistoryBooking">
+                <Link to="/ReservationHistory">
                   <div className="header__dropdown-item">Lịch sử đặt bàn</div>
                 </Link>
                 <div className="header__dropdown-item" onClick={handleLogout}>

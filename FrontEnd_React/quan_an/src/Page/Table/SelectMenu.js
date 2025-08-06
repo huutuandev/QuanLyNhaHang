@@ -57,15 +57,53 @@ function SelectMenu() {
     };
     const selectedFoodsList = Object.values(selectedFoods);
 
-    const handleNextStep=()=>{
-        const totalAmount=selectedFoodsList.reduce((sum,f)=>sum+f.quantity*f.price,0);
-        const orderData={
-            foods:selectedFoodsList,
-            total:totalAmount,
+    const handleNextStep = async () => {
+        const totalAmount = selectedFoodsList.reduce((sum, f) => sum + f.quantity * f.price, 0);
+        const orderData = {
+            foods: selectedFoodsList,
+            total: totalAmount,
         };
-        localStorage.setItem("order",JSON.stringify(orderData));
-        navigate("/pay");
-    }
+        localStorage.setItem("order", JSON.stringify(orderData));
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Vui lòng đăng nhập trước khi tiếp tục");
+            navigate("/login");
+            return;
+        }
+
+        try {
+            const payload = {
+                reservationistName: reservationData.name,
+                reservationistPhone: reservationData.phone,
+                reservationDate: reservationData.date,
+                reservationTime: reservationData.time || "",
+                numberOfGuests: reservationData.numberOfPeople,
+                note: reservationData.note || "",
+                status: "PENDING",
+                orders: selectedFoodsList.map(food => ({
+                    foodId: food.id,
+                    quantity: food.quantity,
+                    note: food.note || ""
+                }))
+            };
+
+            const res = await axios.post("/api/reservations", payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const reservationId = res.data.id;
+            localStorage.setItem("reservationId", reservationId);
+            navigate("/pay");
+        } catch (err) {
+            console.error("Lỗi tạo reservation:", err);
+            alert("Tạo đặt bàn thất bại.");
+        }
+    };
+
 
     if (!reservationData) return <p>Đang tải thông tin đặt bàn...</p>;
 

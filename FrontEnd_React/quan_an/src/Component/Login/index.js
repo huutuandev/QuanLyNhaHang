@@ -6,13 +6,11 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [isLogin, setIsLogin] = useState(true); 
+  const [isLogin, setIsLogin] = useState(true);
 
-  // Đăng nhập
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
-  // Đăng ký
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState("");
@@ -61,9 +59,17 @@ function Login() {
       localStorage.setItem("userName", fullname || "Người dùng");
 
       setSuccessMessage("Đăng nhập thành công!");
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      const token1 = localStorage.getItem("token");
+      const payload = JSON.parse(atob(token1.split('.')[1]));
+      console.log(payload.roles);
+      if (payload.roles.includes("ROLE_ADMIN")) {
+        navigate("/admin");
+      }
+      else if (payload.roles.includes("ROLE_CUSTOMER")) {
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
     } catch (err) {
       const errorMessage =
         typeof err.response?.data === "string"
@@ -94,7 +100,7 @@ function Login() {
         email,
         password: registerPassword,
         retype_password: registerPassword,
-        role_ids:[3],
+        role_ids: [3],
       });
 
       toast.success("Đăng ký thành công!");

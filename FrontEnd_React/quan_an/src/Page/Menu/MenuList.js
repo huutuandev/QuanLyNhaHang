@@ -18,12 +18,12 @@ function MenuList() {
     }, []);
 
     useEffect(() => {
-        setPage(0); // reset trang mỗi khi đổi danh mục
+        setPage(0);
     }, [selectedCategory]);
 
     useEffect(() => {
         if (selectedCategory === "Tất cả") {
-            // Lấy tối đa 4 món của mỗi danh mục (không phân trang tổng thể)
+
             Promise.all(
                 categories.map((cat) =>
                     fetch(`/api/categories/${cat.id}?page=0&size=4`)
