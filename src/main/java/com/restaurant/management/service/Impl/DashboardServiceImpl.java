@@ -1,9 +1,9 @@
 package com.restaurant.management.service.Impl;
 
 
-import com.restaurant.management.requests.MonthlyRevenueRequest;
-import com.restaurant.management.requests.RevenueStatsRequest;
-import com.restaurant.management.requests.StatusCountRequest;
+import com.restaurant.management.responses.MonthlyRevenueResponse;
+import com.restaurant.management.responses.RevenueStatsResponse;
+import com.restaurant.management.responses.StatusCountResponse;
 import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IDashboardService;
@@ -33,7 +33,7 @@ public class DashboardServiceImpl implements IDashboardService {
         long totalCategories = categoryRepo.count();
 
         int currentYear = LocalDate.now().getYear();
-        List<MonthlyRevenueRequest> monthlyRevenues = billRepo.sumMonthlyRevenue(currentYear);
+        List<MonthlyRevenueResponse> monthlyRevenues = billRepo.sumMonthlyRevenue(currentYear);
         return DashboardResponse.builder()
                 .totalUsers(totalUsers)
                 .totalPosts(totalPosts)
@@ -44,10 +44,14 @@ public class DashboardServiceImpl implements IDashboardService {
     }
 
     @Override
-    public RevenueStatsRequest getRevenueStats(LocalDate start, LocalDate end) {
-        Double totalRevenue = billRepo.sumTotalAmountBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
-        Long totalOrders = orderRepo.countByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
-        return RevenueStatsRequest.builder()
+    public RevenueStatsResponse getRevenueStats(LocalDate start, LocalDate end) {
+        Double revenue = billRepo.sumTotalAmountBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
+        double totalRevenue = revenue != null ? revenue : 0.0;
+
+        long totalOrders = start.isBefore(end)
+                ? orderRepo.countByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59))
+                : 0;
+        return RevenueStatsResponse.builder()
                 .startDate(start)
                 .endDate(end)
                 .totalRevenue(totalRevenue)
@@ -56,12 +60,12 @@ public class DashboardServiceImpl implements IDashboardService {
     }
 
     @Override
-    public List<StatusCountRequest> countByYear(int year) {
+    public List<StatusCountResponse> countByYear(int year) {
         return reservationRepo.countByYear(year);
     }
 
     @Override
-    public List<StatusCountRequest> countByMonth(int year, int month) {
+    public List<StatusCountResponse> countByMonth(int year, int month) {
         return reservationRepo.countByMonth(year, month);
     }
 }

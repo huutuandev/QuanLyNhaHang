@@ -14,6 +14,7 @@ public class ReviewDTO {
     private Long userId;
     private Long foodId;
     private String username;
+    private String imageUser;
     private String comment;
     private Integer rating;
 }

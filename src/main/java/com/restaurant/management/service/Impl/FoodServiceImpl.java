@@ -5,11 +5,10 @@ import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.FoodCategoryEntity;
 import com.restaurant.management.models.FoodEntity;
 import com.restaurant.management.responses.FoodDetailResponse;
-import com.restaurant.management.responses.NewFoodResponse;
+import com.restaurant.management.responses.MixFoodResponse;
 import com.restaurant.management.respository.FoodRepository;
 import com.restaurant.management.respository.ReviewRepository;
 import com.restaurant.management.service.IFoodService;
-import com.restaurant.management.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ public class FoodServiceImpl implements IFoodService {
 
     @Override
     public FoodDetailResponse getFoodsAndReviews(Long id) {
-        FoodEntity food = foodRepository.findById(id)
+        FoodEntity food = foodRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found"));
 
         List<ReviewDTO> reviewDTOs = food.getReviews().stream()
@@ -42,6 +40,7 @@ public class FoodServiceImpl implements IFoodService {
                             .id(r.getId())
                             .userId(r.getUser().getId())
                             .username(r.getUser().getFullName())
+                            .imageUser(r.getUser().getImageUrl())
                             .comment(r.getComment())
                             .rating(r.getRating())
                             .build();
@@ -74,7 +73,7 @@ public class FoodServiceImpl implements IFoodService {
     }
 
     @Override
-    public NewFoodResponse getNewFoods() {
+    public MixFoodResponse getNewFoods() {
         List<FoodDTO> newestFoods = foodRepository.findAllByIsDeletedFalse(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .limit(4)
@@ -107,11 +106,12 @@ public class FoodServiceImpl implements IFoodService {
                         .id(review.getId())
                         .username(review.getUser().getFullName())
                         .userId(review.getUser().getId())
+                        .imageUser(review.getUser().getImageUrl())
                         .rating(review.getRating())
                         .comment(review.getComment())
                         .build())
                 .collect(Collectors.toList());
-        return NewFoodResponse.builder()
+        return MixFoodResponse.builder()
                 .newestFoods(newestFoods)
                 .topRatedFood(topRatedDTO)
                 .featuredReviews(featuredReviews)

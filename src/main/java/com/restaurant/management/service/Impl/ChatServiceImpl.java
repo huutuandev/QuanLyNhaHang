@@ -1,5 +1,8 @@
 package com.restaurant.management.service.Impl;
 
+import com.restaurant.management.DTO.ChatSessionDTO;
+import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.models.UserEntity;
 import com.restaurant.management.requests.ChatMessageRequest;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.ChatSessionEntity;
@@ -32,16 +35,15 @@ public class ChatServiceImpl implements IChatService {
                 MessageEntity.builder()
                         .chatSession(session)
                         .messageText(dto.getMessageText())
-                        .senderName(dto.getSenderName())
+//                        .sender()
                         .build()
         );
         ChatMessageRequest out = ChatMessageRequest.builder()
                 .id(saved.getId())
                 .sessionId(session.getId())
-                .senderName(saved.getSenderName())
+//                .senderName(saved.getSenderName())
                 .messageText(saved.getMessageText())
                 .build();
         messagingTemplate.convertAndSend("/topic/chat/" + session.getId(), out);
     }
-
 }

@@ -4,33 +4,25 @@ import com.restaurant.management.DTO.ReservationDTO;
 import com.restaurant.management.DTO.ReservationOrderDTO;
 import com.restaurant.management.DTO.UserDTO;
 
-import java.util.Random;
 
 import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.ReservationEntity;
 import com.restaurant.management.models.ReservationOrderEntity;
-import com.restaurant.management.models.TableEntity;
-import com.restaurant.management.responses.UnavailableTableResponse;
 import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IReservationService;
-import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,7 +110,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public Page<ReservationDTO> getAllReservations(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("reservationDate").descending());
         Page<ReservationEntity> reservationpage = reservationRepo.findAllByIsDeletedFalse(pageable);
         return reservationpage.map(reservationEntity ->
                 modelMapper.map(reservationEntity, ReservationDTO.class));

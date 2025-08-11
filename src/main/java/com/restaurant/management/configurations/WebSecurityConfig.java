@@ -51,7 +51,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/review/**",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/profile", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/change-password", apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/momo/**", apiPrefix),"POST")
+                                new AntPathRequestMatcher(String.format("%s/payment/**", apiPrefix),"POST")
                         ).hasAnyRole(RoleConstants.USER, RoleConstants.ADMIN)
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"POST"),

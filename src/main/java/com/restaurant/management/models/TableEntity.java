@@ -29,9 +29,6 @@ public class TableEntity {
     @OneToMany(mappedBy = "table")
     private List<ReservationEntity> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "table")
-    private List<ChatSessionEntity> chatSessions = new ArrayList<>();
-
     @PrePersist
     public void prePersist() {
         if (status == null) status = "Available";

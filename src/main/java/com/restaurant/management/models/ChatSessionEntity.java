@@ -15,10 +15,6 @@ public class ChatSessionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "TableId")
-    private TableEntity table;
-
     @Column(name = "StartedAt")
     private LocalDateTime startedAt;
 

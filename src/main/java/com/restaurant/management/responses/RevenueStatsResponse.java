@@ -1,4 +1,4 @@
-package com.restaurant.management.requests;
+package com.restaurant.management.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RevenueStatsRequest {
+public class RevenueStatsResponse {
     private LocalDate startDate;
     private LocalDate endDate;
-    private Double totalRevenue;
-    private Long totalOrders;
+    private double totalRevenue;
+    private long totalOrders;
 }

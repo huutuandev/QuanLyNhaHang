@@ -18,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,10 +103,13 @@ public class UserServiceImpl implements IUserService {
                                         .map(RoleEntity::getId)
                                         .collect(Collectors.toList())
                         )
+                        .roleNames(user.getAuthorities()
+                                .stream().map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList())
+                        )
                         .build()
         ).collect(Collectors.toList());
     }
-
     @Override
     public UserDTO findById(Long id) {
         UserEntity user = userRepository.findByIdAndIsDeletedFalse(id)
@@ -122,12 +126,19 @@ public class UserServiceImpl implements IUserService {
                                 .map(RoleEntity::getId)
                                 .collect(Collectors.toList())
                 )
+                .roleNames(user.getAuthorities()
+                        .stream().map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList())
+                )
                 .build();
     }
 
     @Override
     public UserDTO createOrUpdate(UserDTO userDTO) {
         UserEntity user;
+        if(userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
+            throw new DataIntegrityViolationException("Phone number already exists");
+        }
         if (userDTO.getId() != null) {
             user = userRepository.findByIdAndIsDeletedFalse(userDTO.getId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
@@ -137,6 +148,7 @@ public class UserServiceImpl implements IUserService {
             user.setImageUrl(userDTO.getImageUrl());
         } else {
             user = modelMapper.map(userDTO, UserEntity.class);
+            user.setPasswordHash(passwordEncoder.encode(userDTO.getPassword()));
         }
         if (userDTO.getRoleIds() != null) {
             List<RoleEntity> roles = roleRepository.findAllById(userDTO.getRoleIds());

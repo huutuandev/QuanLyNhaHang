@@ -1,6 +1,6 @@
 package com.restaurant.management.respository;
 
-import com.restaurant.management.requests.StatusCountRequest;
+import com.restaurant.management.responses.StatusCountResponse;
 import com.restaurant.management.models.ReservationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,14 +28,14 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
             @Param("date") LocalDate date,
             @Param("currentId") Long currentId
     );
-    @Query("SELECT new com.restaurant.management.requests.StatusCountRequest(r.status, COUNT(r)) " +
+    @Query("SELECT new com.restaurant.management.responses.StatusCountResponse(r.status, COUNT(r)) " +
             "FROM ReservationEntity r " +
             "WHERE r.isDeleted = false AND FUNCTION('YEAR', r.reservationDate) = :year " +
             "GROUP BY r.status")
-    List<StatusCountRequest> countByYear(@Param("year") int year);
+    List<StatusCountResponse> countByYear(@Param("year") int year);
 
     @Query(
-            "SELECT new com.restaurant.management.requests.StatusCountRequest(" +
+            "SELECT new com.restaurant.management.responses.StatusCountResponse(" +
                     "        r.status, COUNT(r) ) " +
                     "FROM ReservationEntity r " +
                     "WHERE r.isDeleted = false " +
@@ -43,8 +43,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
                     "  AND FUNCTION('MONTH', r.reservationDate) = :month " +
                     "GROUP BY r.status"
     )
-    List<StatusCountRequest> countByMonth(@Param("year") int year,
-                                          @Param("month") int month);
+    List<StatusCountResponse> countByMonth(@Param("year") int year,
+                                           @Param("month") int month);
     // ReservationRepository.java
     @Query("SELECT r.table.id FROM ReservationEntity r " +
             "WHERE r.reservationDate = :date " +

@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewFoodResponse {
+public class MixFoodResponse {
     private List<FoodDTO> newestFoods;
     private FoodDTO topRatedFood;
     private List<ReviewDTO> featuredReviews;

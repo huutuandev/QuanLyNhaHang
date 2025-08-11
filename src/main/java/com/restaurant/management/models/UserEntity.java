@@ -52,6 +52,10 @@ public class UserEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "UserId"),
             inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private List<RoleEntity> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    private List<MessageEntity> sentMessages;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {

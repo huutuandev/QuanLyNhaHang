@@ -1,7 +1,7 @@
 package com.restaurant.management.controller;
 
-import com.restaurant.management.requests.RevenueStatsRequest;
-import com.restaurant.management.requests.StatusCountRequest;
+import com.restaurant.management.responses.RevenueStatsResponse;
+import com.restaurant.management.responses.StatusCountResponse;
 import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.service.IDashboardService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class DashboardController {
     }
 
     @GetMapping("/revenue")
-    public ResponseEntity<RevenueStatsRequest> getRevenue(
+    public ResponseEntity<RevenueStatsResponse> getRevenue(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
     ) {
@@ -38,11 +38,11 @@ public class DashboardController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<List<StatusCountRequest>> getReservationStatusStats(
+    public ResponseEntity<List<StatusCountResponse>> getReservationStatusStats(
             @RequestParam Integer year,
             @RequestParam(required = false) Integer month
     ) {
-        List<StatusCountRequest> stats;
+        List<StatusCountResponse> stats;
         if (month == null) {
             stats = dashboardService.countByYear(year);
         } else {

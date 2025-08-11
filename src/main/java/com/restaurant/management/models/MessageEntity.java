@@ -19,9 +19,6 @@ public class MessageEntity {
     @JoinColumn(name = "ChatSessionId")
     private ChatSessionEntity chatSession;
 
-    @Column(name = "SenderName")
-    private String senderName;
-
     @ManyToOne
     @JoinColumn(name = "SenderId")
     private UserEntity sender;

@@ -1,6 +1,6 @@
 package com.restaurant.management.respository;
 
-import com.restaurant.management.requests.MonthlyRevenueRequest;
+import com.restaurant.management.responses.MonthlyRevenueResponse;
 import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.OrderEntity;
 import com.restaurant.management.models.ReservationEntity;
@@ -17,9 +17,9 @@ public interface BillRepository extends JpaRepository<BillEntity, Long> {
     boolean existsByReservation(ReservationEntity reservation);
     BillEntity findByReservationId(Long id);
 
-    @Query("SELECT new com.restaurant.management.requests.MonthlyRevenueRequest(MONTH(b.paidAt), SUM(b.paidAmount)) " +
+    @Query("SELECT new com.restaurant.management.responses.MonthlyRevenueResponse(MONTH(b.paidAt), SUM(b.paidAmount)) " +
             "FROM BillEntity b WHERE YEAR(b.paidAt) = :year GROUP BY MONTH(b.paidAt)")
-    List<MonthlyRevenueRequest> sumMonthlyRevenue(@Param("year") int year);
+    List<MonthlyRevenueResponse> sumMonthlyRevenue(@Param("year") int year);
 
     @Query("SELECT SUM(b.totalAmount) FROM BillEntity b WHERE b.paidAt BETWEEN :start AND :end")
     Double sumTotalAmountBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
