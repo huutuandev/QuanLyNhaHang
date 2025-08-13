@@ -23,6 +23,5 @@ public interface BillRepository extends JpaRepository<BillEntity, Long> {
 
     @Query("SELECT SUM(b.totalAmount) FROM BillEntity b WHERE b.paidAt BETWEEN :start AND :end")
     Double sumTotalAmountBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-    boolean existsByReservation_IdAndIsPaidTrue(Long reservationId);
 
 }

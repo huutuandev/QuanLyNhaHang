@@ -4,7 +4,6 @@ package com.restaurant.management.controller;
 import com.restaurant.management.DTO.ReservationDTO;
 import com.restaurant.management.DTO.UserDTO;
 import com.restaurant.management.responses.PagedResponse;
-import com.restaurant.management.responses.UnavailableTableResponse;
 import com.restaurant.management.service.IReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

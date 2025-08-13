@@ -5,6 +5,7 @@ import com.restaurant.management.DTO.ReservationOrderDTO;
 import com.restaurant.management.DTO.UserDTO;
 
 
+import com.restaurant.management.constant.BillStatusConstant;
 import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.ReservationEntity;
@@ -90,6 +91,9 @@ public class ReservationServiceImpl implements IReservationService {
     public void cancel(Long id) {
         ReservationEntity reservation = reservationRepo.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found with id" + id));
         reservation.setStatus(ReservationStatusConstant.CANCELLED);
+        if (reservation.getBill() != null) {
+            reservation.getBill().setPaymentStatus(BillStatusConstant.CANCELLED);
+        }
         reservationRepo.save(reservation);
     }
 
@@ -98,12 +102,8 @@ public class ReservationServiceImpl implements IReservationService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("reservationDate").descending());
         Page<ReservationEntity> reservationPage = reservationRepo.findByCustomerId(userId, pageable);
 
-        return reservationPage.map(entity -> {
-            ReservationDTO dto = modelMapper.map(entity, ReservationDTO.class);
-            boolean isPaid = billRepo.existsByReservation_IdAndIsPaidTrue(entity.getId());
-            dto.setIsPaid(isPaid);
-            return dto;
-        });
+        return reservationPage.map(entity ->
+                modelMapper.map(entity, ReservationDTO.class));
     }
 
 

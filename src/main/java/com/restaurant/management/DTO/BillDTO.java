@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BillDTO {
-    private Long Id;
-    private Long OrderId;
-    private Long ReservationId;
-    private Double TotalAmount;
+    private Long id;
+    private Long orderId;
+    private Long reservationId;
+    private Double totalAmount;
     private Double paidAmount;
-    private String PaymentMethod;
+    private String paymentMethod;
+    private String paymentStatus;
 }

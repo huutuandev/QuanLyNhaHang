@@ -2,6 +2,7 @@ package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.DTO.BillDTO;
 import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.constant.BillStatusConstant;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.*;
 import com.restaurant.management.requests.ConfirmPaymentRequest;
@@ -60,7 +61,6 @@ public class BillServiceImpl implements IBillService {
                 .cashier(user)
                 .totalAmount(billDTO.getTotalAmount())
                 .paidAmount(billDTO.getPaidAmount())
-                .isPaid(false)
                 .paymentMethod(billDTO.getPaymentMethod());
         if (hasOrder) {
             OrderEntity order = orderRepository.findById(billDTO.getOrderId())
@@ -90,7 +90,7 @@ public class BillServiceImpl implements IBillService {
         }
         BillEntity bill = getUnpaidBillByReservationId(reservationId);
         ReservationEntity reservation = getReservationById(reservationId);
-        bill.setIsPaid(true);
+        bill.setPaymentStatus(BillStatusConstant.DEPOSIT_PAID);
         bill.setPaidAt(LocalDateTime.now());
         assignTableToReservation(reservation);
         bill.setReservation(reservation);
@@ -108,8 +108,8 @@ public class BillServiceImpl implements IBillService {
         if (bill == null) {
             throw new RuntimeException("Không tìm thấy hóa đơn cho đặt bàn này");
         }
-        if (Boolean.TRUE.equals(bill.getIsPaid())) {
-            throw new RuntimeException("Hóa đơn đã được thanh toán");
+        if (BillStatusConstant.DEPOSIT_PAID.equals(bill.getPaymentStatus())) {
+            throw new RuntimeException("Hóa đơn đã được cọc tiền");
         }
         return bill;
     }
@@ -132,6 +132,4 @@ public class BillServiceImpl implements IBillService {
         TableEntity chosenTable = availableTables.get(new Random().nextInt(availableTables.size()));
         reservation.setTable(chosenTable);
     }
-
-
 }

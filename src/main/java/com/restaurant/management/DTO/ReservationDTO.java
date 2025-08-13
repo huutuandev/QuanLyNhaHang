@@ -23,7 +23,6 @@ public class ReservationDTO {
     private Integer numberOfGuests;
     private String note;
     private String status;
-    private boolean IsPaid;
     private List<ReservationOrderDTO> orders;
 }
 
