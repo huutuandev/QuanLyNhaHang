@@ -1,6 +1,7 @@
 package com.restaurant.management.models;
 
 
+import com.restaurant.management.enums.Role;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,6 +45,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "ImageUrl", length = 255)
     private String imageUrl;
 
+
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
@@ -52,6 +54,9 @@ public class UserEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "UserId"),
             inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private List<RoleEntity> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<ChatSessionEntity> usersChatSessions;
 
     @OneToMany(mappedBy = "sender", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
     private List<MessageEntity> sentMessages;

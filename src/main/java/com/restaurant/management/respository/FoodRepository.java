@@ -15,4 +15,5 @@ public interface FoodRepository extends JpaRepository<FoodEntity,Long> {
     List<FoodEntity> findAllByIsDeletedFalse(Sort createdAt);
     Optional<FoodEntity> findByIdAndIsDeletedFalse(Long id);
     Page<FoodEntity> findAllByIsDeletedFalse(Pageable pageable);
+    Page<FoodEntity> findAllByIsDeletedTrue(Pageable pageable);
 }

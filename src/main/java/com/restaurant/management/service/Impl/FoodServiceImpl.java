@@ -160,4 +160,20 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setIsDeleted(true);
         foodRepository.save(foodEntity);
     }
+
+    @Override
+    public Page<FoodDTO> getAllFoodDeleted(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FoodEntity> foodEntities = foodRepository.findAllByIsDeletedTrue(pageable);
+        return foodEntities.map(foodEntity -> modelMapper.map(foodEntity, FoodDTO.class));
+    }
+
+    @Override
+    public FoodDTO updateFoodRecovery(Long id) {
+        FoodEntity food =  foodRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy món ăn này"));
+        food.setIsDeleted(Boolean.FALSE);
+        foodRepository.save(food);
+        return modelMapper.map(food, FoodDTO.class);
+    }
 }

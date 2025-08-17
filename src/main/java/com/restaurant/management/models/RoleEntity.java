@@ -1,6 +1,7 @@
 package com.restaurant.management.models;
 
 
+import com.restaurant.management.enums.Role;
 import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ public class RoleEntity {
 
     @Column(name = "RoleName", nullable = false, unique = true, length = 50)
     private String roleName;
+//
+//    @Column
+//    @Enumerated(EnumType.STRING)
+//    private Role roleName;
 
     @ManyToMany(mappedBy = "roles")
     private List<UserEntity> users = new ArrayList<>();

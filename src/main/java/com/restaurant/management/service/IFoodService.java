@@ -12,4 +12,6 @@ public interface IFoodService {
     FoodDTO getById(Long id);
     FoodDTO createOrUpdate(FoodDTO foodDTO);
     void deleteById(Long id);
+    Page<FoodDTO> getAllFoodDeleted(int page, int size);
+    FoodDTO updateFoodRecovery(Long id);
 }

@@ -26,6 +26,18 @@ public class FoodController {
         Page<FoodDTO> foodDTOPage = foodService.getAllFoods(page, size);
         return ResponseEntity.ok(new PagedResponse<>(foodDTOPage, foodDTOPage.getContent()));
     }
+    @GetMapping("/deleted")
+    public ResponseEntity<PagedResponse<FoodDTO>> getAllFoodDeleted(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ){
+        Page<FoodDTO> foodDTOPage = foodService.getAllFoodDeleted(page, size);
+        return ResponseEntity.ok(new PagedResponse<>(foodDTOPage, foodDTOPage.getContent()));
+    }
+    @PutMapping("/recovery/{id}")
+    public ResponseEntity<FoodDTO> UpdateFoodRecovery(@PathVariable Long id){
+        return ResponseEntity.ok(foodService.updateFoodRecovery(id));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<FoodDTO> getById(@PathVariable Long id){

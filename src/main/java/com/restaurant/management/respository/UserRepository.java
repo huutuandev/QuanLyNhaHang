@@ -12,4 +12,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByPhoneNumber(String phoneNumber);
     List<UserEntity> findAllByIsDeletedFalse();
     Optional<UserEntity> findByIdAndIsDeletedFalse(Long id);
+    Optional<UserEntity> findFirstByRoles_RoleName(String roleName);
 }
