@@ -101,9 +101,13 @@ public class ReservationServiceImpl implements IReservationService {
     public Page<ReservationDTO> getAllByUser(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("reservationDate").descending());
         Page<ReservationEntity> reservationPage = reservationRepo.findByCustomerId(userId, pageable);
-
-        return reservationPage.map(entity ->
-                modelMapper.map(entity, ReservationDTO.class));
+        return reservationPage.map(entity -> {
+            ReservationDTO dto = modelMapper.map(entity, ReservationDTO.class);
+            if (entity.getBill() != null) {
+                dto.setPaymentStatus(entity.getBill().getPaymentStatus());
+            }
+            return dto;
+        });
     }
 
 

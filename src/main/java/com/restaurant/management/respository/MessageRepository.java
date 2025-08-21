@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
-    // Lấy danh sách tin nhắn theo phòng chat, sắp xếp tăng dần theo thời gian gửi
-    List<MessageEntity> findByChatSessionIdOrderBySentAtAsc(Long chatSessionId);
+    List<MessageEntity> findBySessionId(Long sessionId);
 }

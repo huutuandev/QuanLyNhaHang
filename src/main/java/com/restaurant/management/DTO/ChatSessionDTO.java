@@ -10,8 +10,7 @@ import java.util.List;
 @Builder
 public class ChatSessionDTO {
     private Long id;
-    private Long userId;                // thay cho UserEntity
-    private LocalDateTime startedAt;
-    private LocalDateTime endedAt;
-    private List<MessageDTO> messages;  // danh sách message
+    private String phoneNumber;
+    private String fullName;
+    private LocalDateTime createdAt;
 }

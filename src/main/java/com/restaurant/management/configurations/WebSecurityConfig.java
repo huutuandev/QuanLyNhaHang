@@ -31,7 +31,6 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/auth/register", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/auth/login", apiPrefix)),

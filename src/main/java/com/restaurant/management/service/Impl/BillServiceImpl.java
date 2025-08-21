@@ -3,7 +3,6 @@ package com.restaurant.management.service.Impl;
 import com.restaurant.management.DTO.BillDTO;
 import com.restaurant.management.DTO.UserDTO;
 import com.restaurant.management.constant.BillStatusConstant;
-import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.*;
 import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.respository.BillRepository;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;

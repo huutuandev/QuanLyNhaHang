@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatSessionRepository extends JpaRepository<ChatSessionEntity, Long>{
-    List<ChatSessionEntity> findByUser_PhoneNumber(String phoneNumber);
 
 }

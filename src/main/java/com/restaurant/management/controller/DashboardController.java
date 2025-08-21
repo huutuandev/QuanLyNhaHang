@@ -1,8 +1,8 @@
 package com.restaurant.management.controller;
 
+import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.responses.RevenueStatsResponse;
 import com.restaurant.management.responses.StatusCountResponse;
-import com.restaurant.management.responses.DashboardResponse;
 import com.restaurant.management.service.IDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;

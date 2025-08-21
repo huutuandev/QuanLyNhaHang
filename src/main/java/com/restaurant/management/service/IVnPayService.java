@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface IVnPayService {
     String createPayment(long amount, String orderInfo) throws Exception;
-    boolean processIPN(Map<String, String> params);
+//    boolean processIPN(Map<String, String> params);
 }

@@ -1,4 +1,5 @@
 package com.restaurant.management.models;
+
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,21 +16,16 @@ public class ChatSessionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "PhoneNumber", nullable = true, length = 50)
+    private String phoneNumber;
 
-    @Column(name = "StartedAt")
-    private LocalDateTime startedAt;
+    @Column(name = "FullName", length = 100)
+    private String fullName;
 
-    @Column(name = "EndedAt")
-    private LocalDateTime endedAt;
+    @Column(name = "CreatedAt")
+    private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "chatSession")
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageEntity> messages = new ArrayList<>();
-
-    @PrePersist
-    public void prePersist() {
-        if (startedAt == null) startedAt = LocalDateTime.now();
-    }
 }
+

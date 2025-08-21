@@ -16,21 +16,15 @@ public class MessageEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "ChatSessionId")
-    private ChatSessionEntity chatSession;
+    @JoinColumn(name = "SessionId", nullable = false)
+    private ChatSessionEntity session;
 
-    @ManyToOne
-    @JoinColumn(name = "SenderId")
-    private UserEntity sender;
+    @Column(name = "SenderPhone", nullable = true, length = 50)
+    private String senderPhone;
 
-    @Column(name = "MessageText")
-    private String messageText;
+    @Column(name = "Content", columnDefinition = "TEXT")
+    private String content;
 
     @Column(name = "SentAt")
     private LocalDateTime sentAt;
-
-    @PrePersist
-    public void prePersist() {
-        if (sentAt == null) sentAt = LocalDateTime.now();
-    }
 }

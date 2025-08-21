@@ -1,4 +1,4 @@
-package com.restaurant.management.service.impl;
+package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.service.IVnPayService;
 import lombok.RequiredArgsConstructor;
@@ -88,39 +88,39 @@ public class VnPayServiceImpl implements IVnPayService {
 
 
 
-    @Override
-    public boolean processIPN(Map<String, String> params) {
-        try {
-            String vnp_SecureHash = params.remove("vnp_SecureHash");
-
-            List<String> fieldNames = new ArrayList<>(params.keySet());
-            Collections.sort(fieldNames);
-            StringBuilder hashData = new StringBuilder();
-            for (int i = 0; i < fieldNames.size(); i++) {
-                String fieldName = fieldNames.get(i);
-                String fieldValue = params.get(fieldName);
-                hashData.append(fieldName).append("=").append(fieldValue);
-                if (i < fieldNames.size() - 1) {
-                    hashData.append("&");
-                }
-            }
-
-            String secureHashCheck = hmacSHA512(vnp_HashSecret, hashData.toString());
-            if (!secureHashCheck.equals(vnp_SecureHash)) {
-                return false;
-            }
-
-            if ("00".equals(params.get("vnp_ResponseCode"))) {
-                // ✅ Thanh toán thành công → cập nhật đơn hàng
-                String orderId = params.get("vnp_TxnRef");
-                // orderService.updateStatus(orderId, "PAID");
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean processIPN(Map<String, String> params) {
+//        try {
+//            String vnp_SecureHash = params.remove("vnp_SecureHash");
+//
+//            List<String> fieldNames = new ArrayList<>(params.keySet());
+//            Collections.sort(fieldNames);
+//            StringBuilder hashData = new StringBuilder();
+//            for (int i = 0; i < fieldNames.size(); i++) {
+//                String fieldName = fieldNames.get(i);
+//                String fieldValue = params.get(fieldName);
+//                hashData.append(fieldName).append("=").append(fieldValue);
+//                if (i < fieldNames.size() - 1) {
+//                    hashData.append("&");
+//                }
+//            }
+//
+//            String secureHashCheck = hmacSHA512(vnp_HashSecret, hashData.toString());
+//            if (!secureHashCheck.equals(vnp_SecureHash)) {
+//                return false;
+//            }
+//
+//            if ("00".equals(params.get("vnp_ResponseCode"))) {
+//                // ✅ Thanh toán thành công → cập nhật đơn hàng
+//                String orderId = params.get("vnp_TxnRef");
+//                // orderService.updateStatus(orderId, "PAID");
+//                return true;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
 
     private String hmacSHA512(String key, String data) throws Exception {

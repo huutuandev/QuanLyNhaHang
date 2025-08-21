@@ -2,41 +2,52 @@ package com.restaurant.management.controller;
 
 import com.restaurant.management.DTO.ChatSessionDTO;
 import com.restaurant.management.DTO.MessageDTO;
-import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.models.ChatSessionEntity;
-import com.restaurant.management.responses.ChatSessionResponse;
 import com.restaurant.management.service.IChatService;
-import com.restaurant.management.service.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chat")
 @RequiredArgsConstructor
+@RequestMapping("/api/chat")
 public class ChatController {
     private final IChatService chatService;
-    private final IUserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @GetMapping("/session")
-    public ResponseEntity<?> getOrCreateChat(@AuthenticationPrincipal UserDTO userDTO) {
-        ChatSessionDTO session = chatService.getOrCreateSession(userDTO);
-        return ResponseEntity.ok(session);
+    // User gửi tin nhắn
+    @MessageMapping("/sendMessage")
+    public void sendMessage(MessageDTO msg) {
+        // Nếu chưa có session thì tạo
+        ChatSessionDTO session = chatService.createSessionIfNotExists(msg.getSenderPhone(), "Guest");
+
+        // Lưu tin nhắn
+        MessageDTO saved = chatService.saveMessage(session.getId(), msg.getSenderPhone(), msg.getContent());
+
+        // Bắn realtime cho admin (topic riêng cho admin)
+        messagingTemplate.convertAndSend("/topic/admin", saved);
     }
 
-    // Admin: lấy tất cả sessions
+    // Admin gửi tin nhắn vào session cụ thể
+    @MessageMapping("/adminSend")
+    public void adminSend(MessageDTO msg) {
+        MessageDTO saved = chatService.saveMessage(msg.getSessionId(), msg.getSenderPhone(), msg.getContent());
+
+        // Gửi lại cho user theo session riêng
+        messagingTemplate.convertAndSend("/topic/session/" + msg.getSessionId(), saved);
+    }
+
+    // API admin lấy tất cả sessions
     @GetMapping("/sessions")
-    public ResponseEntity<?> getAllSessions() {
-        return ResponseEntity.ok(chatService.getAllSessionsForAdmin());
+    public List<ChatSessionDTO> getAllSessions() {
+        return chatService.getAllSessions();
     }
 
-    // Admin: xem tin nhắn 1 session cụ thể
-    @GetMapping("/{sessionId}/messages")
-    public ResponseEntity<?> getMessages(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(chatService.getMessages(sessionId));
+    // API admin xem lịch sử chat
+    @GetMapping("/sessions/{id}/messages")
+    public List<MessageDTO> getMessagesBySession(@PathVariable Long id) {
+        return chatService.getMessagesBySession(id);
     }
-
 }

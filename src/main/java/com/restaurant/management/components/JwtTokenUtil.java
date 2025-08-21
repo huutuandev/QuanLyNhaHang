@@ -33,13 +33,11 @@ public class JwtTokenUtil {
     public String generateToken(UserEntity user) throws Exception {
         Map<String, Object> claims = new HashMap<>();
         claims.put("phoneNumber", user.getPhoneNumber());
-
         // ✅ Thêm roles vào claims
         List<String> roles = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        claims.put("roles", roles); // 👈 Thêm quyền vào token
-
+        claims.put("roles", roles);
         try {
             return Jwts.builder()
                     .setClaims(claims)
@@ -86,7 +84,6 @@ public class JwtTokenUtil {
         String phoneNumber = extractPhoneNumber(token);
         return phoneNumber.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
-
 
 
 }

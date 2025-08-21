@@ -24,6 +24,7 @@ public class ReservationDTO {
     private String note;
     private String status;
     private List<ReservationOrderDTO> orders;
+    private String paymentStatus;
 }
 
 

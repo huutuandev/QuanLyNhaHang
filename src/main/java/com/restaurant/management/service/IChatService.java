@@ -9,9 +9,9 @@ import com.restaurant.management.models.MessageEntity;
 import java.util.List;
 
 public interface IChatService {
-    ChatSessionDTO getOrCreateSession(UserDTO user);
-    List<ChatSessionEntity> getAllSessionsForAdmin();
-    List<MessageDTO> getMessages(Long sessionId);
-    MessageDTO sendMessage(Long sessionId, String phoneNumber, String content);
+    ChatSessionDTO createSessionIfNotExists(String phone, String fullName);
+    MessageDTO saveMessage(Long sessionId, String senderPhone, String content);
+    List<ChatSessionDTO> getAllSessions();
+    List<MessageDTO> getMessagesBySession(Long sessionId);
 
 }

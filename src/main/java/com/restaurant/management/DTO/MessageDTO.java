@@ -9,8 +9,9 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageDTO {
     private Long id;
-    private Long sessionId;       // thay cho ChatSessionEntity
-    private String senderPhone;   // thay cho UserEntity
-    private String messageText;
+    private Long sessionId;
+    private String senderPhone;
+    private String fullName;
+    private String content;
     private LocalDateTime sentAt;
 }

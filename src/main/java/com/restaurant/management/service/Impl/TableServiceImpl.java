@@ -2,7 +2,6 @@ package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.DTO.TableDTO;
 import com.restaurant.management.models.TableEntity;
-import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.respository.ReservationRepository;
 import com.restaurant.management.respository.TableRepository;
 import com.restaurant.management.service.ITableService;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
