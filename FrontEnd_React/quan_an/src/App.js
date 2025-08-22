@@ -1,6 +1,7 @@
 
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import ProtectedRoute from './ProtectedRoute';
 import Home from './Page/Home';
 import Menu from './Page/Menu';
 import Service from './Page/Service';
@@ -18,7 +19,7 @@ import ReservationHistory from './Page/HistoryBooking';
 import PaymentSuccess from './Page/Table/PaymentSuccess';
 import LayoutAdmin from './PageAdmin/LayOutAdmin';
 import GridDashboard from './PageAdmin/page/Dashboard/Grid-Dashboard';
-import GridPosts from './PageAdmin/page/Post-Manage/Grid-Post';
+import GridPost from './PageAdmin/page/Post-Manage/Grid-Post';
 import GridUsers from './PageAdmin/page/User-Manager/Grid-User';
 import GridReservation from './PageAdmin/page/Reservation- Manage/Grid-Reservation';
 import GridCustomer from './PageAdmin/page/Customer-Consulting/Grid-Customer';
@@ -27,52 +28,87 @@ import DeletedFood from './PageAdmin/page/Food-Manager/Deleted-Food';
 import ListFood from './PageAdmin/page/Food-Manager/List-Food';
 import AddFood from './PageAdmin/page/Food-Manager/AddFood';
 import AddCatagory from './PageAdmin/page/Food-Manager/AddCatagory';
-
+import EditPost from './PageAdmin/page/Post-Manage/Edit-Post';
+import AddUser from './PageAdmin/page/User-Manager/AddUser';
+import TableManagement from './PageAdmin/page/Table-Manager';
+import AdminChat from './PageAdmin/page/Customer-Consulting/Grid-Customer';
+// import AdminChat from './PageAdmin/page/AdminChat';
+import Recovery from './PageAdmin/page/Food-Manager/Recovery';
 function App() {
   const isLoggedIn = !!localStorage.getItem('token');
   return (
     <>
-
+    
       <Routes>
-        <Route path='/' element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="Menu" element={<Menu />} />
           <Route path="Service" element={<Service />} />
           <Route path="Orther" element={<Orther />} />
           <Route path="News" element={<News />} />
           <Route path="Table" element={<Table />} />
-          {/* <Route path="/SelectTable" element={<SelectTable />} /> */}
-          <Route path="/SelectMenu" element={<SelectMenu />} />
-          <Route path="/pay" element={<Pay />} />
-          <Route path='/DetailFoods' element={<DetailFoods />} />
-          <Route path='/ReservationHistory' element={<ReservationHistory />} />
+          <Route path="/DetailFoods" element={<DetailFoods />} />
         </Route>
 
-        {/* trang admin */}
-        <Route path="/admin" element={<LayoutAdmin />}>
+        <Route
+          path="/SelectMenu"
+          element={
+            <ProtectedRoute>
+              <SelectMenu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pay"
+          element={
+            <ProtectedRoute>
+              <Pay />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ReservationHistory"
+          element={
+            <ProtectedRoute>
+              <ReservationHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-Success"
+          element={
+            <ProtectedRoute>
+              <PaymentSuccess />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requiredRole="ROLE_ADMIN">
+              <LayoutAdmin />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<GridDashboard />} />
           <Route path="Food-Category" element={<FoodCategory />} />
           <Route path="Food-List" element={<ListFood />} />
           <Route path="Add-Food" element={<AddFood />} />
-          <Route path="Add-Catagory" element={<AddCatagory/>}/>
-          <Route path="Delete-Food" element={<DeletedFood />} />
-          <Route path="Post-Manager" element={<GridPosts />} />
+          <Route path="edit-category" element={<AddCatagory />} />
+          <Route path="Delete-Food" element={<Recovery />} />
+          <Route path="Post-Manager" element={<GridPost />} />
+          <Route path="edit-post" element={<EditPost />} />
           <Route path="Account-Manager" element={<GridUsers />} />
+          <Route path="Add-User" element={<AddUser />} />
           <Route path="Booking-Manager" element={<GridReservation />} />
-          <Route path="Customer-Support" element={<GridCustomer />} />
+          <Route path="Table-Manager" element={<TableManagement/>}/>
+          <Route path="Customer-Support" element={<AdminChat />} />
         </Route>
 
+        <Route path="/Login" element={<Login />} />
         <Route path="*" element={<Error />} />
-        <Route path="Login" element={<Login />} />
-        <Route path='/payment-Success' element={<PaymentSuccess />} />
       </Routes>
-      {/* <Routes>
-        <Route path="/admin" element={<LayoutAdmin />}>
-          <Route index element={<GridDashboard />} />
-          {/* <Route path="foods" element={<QuanLyMonAn />} />
-          <Route path="posts" element={<QuanLyBaiViet />} /> */}
-      {/* </Route>
-      // </Routes> */}
     </>
   );
 }

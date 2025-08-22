@@ -1,4 +1,4 @@
-import { Badge, Layout, Menu, Avatar } from "antd";
+import { Badge, Layout, Menu, Avatar, Dropdown, Space } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import './LayOutAdmin.scss';
 import logo from "../image/logo.png";
@@ -14,13 +14,25 @@ import {
   MessageOutlined,
   BellOutlined
 } from "@ant-design/icons";
-import { Children, useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const { Content, Sider } = Layout;
 
 function LayoutAdmin() {
   const [collapsed, setcollapsed] = useState(false);
   const navigate = useNavigate();
+  const [fullname, setFullName] = useState("");
+
+  useEffect(() => {
+    axios.get(`/api/users/profile`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+    })
+      .then(res => {
+        setFullName(res.data.fullname);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   const menuItems = [
     { key: "1", icon: <HomeOutlined />, label: "Dashboard" },
@@ -35,7 +47,15 @@ function LayoutAdmin() {
     },
     { key: "3", icon: <FileTextOutlined />, label: "Quản Lý Bài Viết" },
     { key: "4", icon: <UserOutlined />, label: "Quản Lý Tài Khoản" },
-    { key: "5", icon: <TableOutlined />, label: "Quản Lý Đặt Bàn" },
+    {
+      key: "5", icon: <TableOutlined />,
+      label: "Quản Lý Đặt Bàn",
+      children: [
+        { key: "5-1", label: "Danh Sách Đặt Bàn" },
+        { key: "5-2", label: "Danh Sách Bàn" },
+
+      ],
+    },
     { key: "6", icon: <MessageOutlined />, label: "Tư vấn với khách hàng" },
   ];
 
@@ -46,9 +66,24 @@ function LayoutAdmin() {
     "2-3": "/admin/Delete-Food",
     "3": "/admin/Post-Manager",
     "4": "/admin/Account-Manager",
-    "5": "/admin/Booking-Manager",
+    "5-1": "/admin/Booking-Manager",
+    "5-2": "/admin/Table-Manager",
     "6": "/admin/Customer-Support",
   };
+
+  const userMenu = (
+    <Menu
+      items={[
+        { key: "hello", label: `Xin chào,${fullname}` },
+        {
+          key: "logout", label: "Đăng xuất", onClick: () => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          }
+        }
+      ]}
+    />
+  )
 
   return (
     <Layout className="layout-default">
@@ -72,16 +107,16 @@ function LayoutAdmin() {
             <Badge dot offset={[-2, 2]}>
               <BellOutlined style={{ fontSize: 20, cursor: "pointer" }} />
             </Badge>
-            <div className="admin-user-info">
-              <Avatar
-                src=""
-                size={32}
-                alt="admin avatar"
-              />
-              <span className="admin-username">
-                Hi , <strong>Huy admin</strong>
-              </span>
-            </div>
+            <Dropdown overlay={userMenu} trigger={['click']} placement="bottomRight">
+              <Space style={{ cursor: "pointer" }}>
+                <Avatar
+                  src=""
+                  size={32}
+                  alt="admin avatar"
+                  icon={<UserOutlined />}
+                />
+              </Space>
+            </Dropdown>
           </div>
         </div>
       </header>

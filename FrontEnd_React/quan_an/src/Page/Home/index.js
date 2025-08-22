@@ -6,6 +6,8 @@ import { SlEarphonesAlt } from "react-icons/sl";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
+import ChatRoom from "../ChatRoom";
+import UserChat from "../UserChat";
 function Home() {
     const [data, setData] = useState([]);
     const [newestFoods, setNewestFoods] = useState([]);
@@ -34,8 +36,7 @@ function Home() {
                 setCurrentReviewIndex((prevIndex) =>
                     (prevIndex + 1) % featuredReviews.length
                 );
-            }, 10000); // chuyển mỗi 4 giây
-
+            }, 10000);
             return () => clearInterval(interval);
         }
     }, [featuredReviews]);
@@ -161,6 +162,10 @@ function Home() {
                         </div>
                     </section>
                 )}
+                <section>
+                    {/* <ChatRoom/> */}
+                    <UserChat/>
+                </section>
             </div >
         </>
     )

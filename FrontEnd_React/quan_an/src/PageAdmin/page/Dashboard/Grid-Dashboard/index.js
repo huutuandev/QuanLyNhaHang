@@ -77,11 +77,11 @@ function GridDashboard() {
           </Col>
         </Row>
 
-        <Row gutter={[20, 20]} className="mt-20">
+        {/* <Row gutter={[20, 20]} className="mt-20">
           <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} >
             <CardItem title="box 6" style={{ height: "400px" }} />
           </Col>
-        </Row>
+        </Row> */}
         <Row gutter={[20, 20]} className="mt-20">
           <Col xxl={24} xl={24} lg={24} md={24} sm={24} xs={24} >
             <Card title="Thống kê doanh thu">

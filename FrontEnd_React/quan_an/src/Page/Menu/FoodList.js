@@ -1,4 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 function FoodList({ foods }) {
+    const navigate = useNavigate();
+
+    const handleFoodClick = (id) => {
+        localStorage.setItem("selectedFoodId", id); // Lưu id món ăn
+        navigate(`/DetailFoods`); // Chuyển sang trang chi tiết
+    };
+
     const isGrouped =
         Array.isArray(foods) &&
         foods.length > 0 &&
@@ -13,7 +22,12 @@ function FoodList({ foods }) {
                         <h3 style={{ marginTop: "20px" }}>{group.categoryName}</h3>
                         <div className="food-list">
                             {group.foods.content.map((food) => (
-                                <div className="food-item" key={food.id}>
+                                <div
+                                    className="food-item"
+                                    key={food.id}
+                                    onClick={() => handleFoodClick(food.id)}
+                                    style={{ cursor: "pointer" }}
+                                >
                                     <img src={food.imageUrl} alt={food.name} />
                                     <h4>{food.name}</h4>
                                     <p>{food.description}</p>
@@ -30,7 +44,12 @@ function FoodList({ foods }) {
     return (
         <div className="food-list">
             {foods.map((food) => (
-                <div className="food-item" key={food.id}>
+                <div
+                    className="food-item"
+                    key={food.id}
+                    onClick={() => handleFoodClick(food.id)}
+                    style={{ cursor: "pointer" }}
+                >
                     <img src={food.imageUrl} alt={food.name} />
                     <h4>{food.name}</h4>
                     <p>{food.description}</p>

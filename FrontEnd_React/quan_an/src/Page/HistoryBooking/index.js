@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./HistoryBooking.scss";
 import Modal from "react-modal";
+import Header from "../../Component/Header";
 function ReservationHistory() {
   const [reservations, setReservations] = useState([]);
   const [bills, setBills] = useState([]);
@@ -139,6 +140,7 @@ function ReservationHistory() {
 
   return (
     <>
+      <header><Header/></header>
       <div className="reservation-history">
         {reservations.length === 0 ? (
           <p>Không có đặt bàn nào.</p>

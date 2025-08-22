@@ -1,0 +1,182 @@
+.chat-floating-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1890ff;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.chat-popup {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  height: 380px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;   // ✅ quan trọng
+  z-index: 1001;
+}
+.messages-container {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+/* Hàng chứa tin nhắn */
+.message-row {
+  display: flex;
+}
+
+/* Tin nhắn admin (trái) */
+.message-left {
+  justify-content: flex-start;
+
+  .message-box {
+    background: #f0f0f0;
+    color: #000;
+    border-radius: 18px 18px 18px 6px;
+    align-self: flex-start;
+  }
+}
+
+/* Tin nhắn user (phải) */
+.message-right {
+  justify-content: flex-end;
+
+  .message-box {
+    background: #0084ff;
+    color: #fff;
+    border-radius: 18px 18px 6px 18px;
+    align-self: flex-end;
+  }
+}
+
+/* Hộp tin nhắn */
+.message-box {
+  max-width: 65%;
+  padding: 8px 12px;
+  word-wrap: break-word;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nội dung */
+.message-text {
+  margin-bottom: 3px;
+}
+
+/* Thời gian */
+.message-time {
+  font-size: 11px;
+  opacity: 0.7;
+  align-self: flex-end;
+}
+
+
+.chat-popup-header {
+  background: #1890ff;
+  color: white;
+  padding: 10px;
+  align-items: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.chat-close {
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.user-info-form {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  h4{
+    align-items: center;
+  }
+}
+
+.user-info-form input,
+.user-info-form select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.btn-start {
+  background: #1890ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #888;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.message-left {
+  justify-content: flex-start;
+}
+
+.message-right {
+  justify-content: flex-end;
+}
+
+.message-box {
+  max-width: 60%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 4px;
+  display: inline-block;
+  word-wrap: break-word;
+}
+
+.message-left .message-box {
+  background: #f0f0f0;
+  text-align: left;
+}
+
+.message-right .message-box {
+  background: #0084ff;
+  color: white;
+  text-align: right;
+}
+.msg-avatar {
+  font-size: 28px;
+  color: #888;
+  margin: 0 6px;
+}
+
+/* Nếu là user thì avatar xanh */
+.user-avatar {
+  color: #0084ff;
+}

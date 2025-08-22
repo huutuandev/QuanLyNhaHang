@@ -22,10 +22,9 @@ function FoodCategory() {
         },
       });
 
-      // Nếu API trả có ngày tạo / cập nhật thì giữ nguyên, còn không thì tạo giả lập
       const data = res.data.map((cat, index) => ({
         ...cat,
-        status: index % 2 === 0 ? 'Hoạt động' : 'Ngưng hoạt động', // Demo trạng thái
+        status: index % 2 === 0 ? 'Hoạt động' : 'Ngưng hoạt động', 
         createdAt: cat.createdAt || new Date().toLocaleString(),
         updatedAt: cat.updatedAt || new Date().toLocaleString(),
       }));
@@ -104,7 +103,7 @@ function FoodCategory() {
             type="primary"
             size="small"
             style={{ marginRight: 8 }}
-            onClick={() => navigate(`/admin/edit-category/${record.id}`)}
+            onClick={() => navigate(`/admin/edit-category`, { state: { id: record.id } })}
           >
             Sửa
           </Button>
@@ -131,7 +130,7 @@ function FoodCategory() {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
           <Button
             type="primary"
-            onClick={() => navigate("/admin/Add-Catagory")}
+            onClick={() => navigate("/admin/edit-category")}
           >
             Thêm danh mục
           </Button>

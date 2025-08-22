@@ -31,7 +31,7 @@ function News() {
                     <div className="content2__left">
                         {Data.map((item) => (
                             <div className="box-vertical" key={item.id}>
-                                <img src={item.imagUrl} alt={item.title} />
+                                <img src={item.imageUrl} alt={item.title} />
                                 <p>{item.content}</p>
                                  <p><i>Tác giả: {item.authorName}</i></p>
                             </div>
@@ -43,7 +43,7 @@ function News() {
                         {Data.map((item) => (
                             <div className="box-horizontal" key={`right-${item.id}`}>
                                 <p>{item.content}</p>
-                                <img src={item.imagUrl} alt={item.title} />
+                                <img src={item.imageUrl} alt={item.title} />
                             </div>
                         ))}
                     </div>

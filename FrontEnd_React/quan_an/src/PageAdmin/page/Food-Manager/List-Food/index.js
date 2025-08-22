@@ -11,7 +11,7 @@ function ListFood() {
   const [searchName, setSearchName] = useState('');
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 3,
+    pageSize: 5,
     total: 0,
   });
 
@@ -22,7 +22,7 @@ function ListFood() {
 
     try {
       while (page < totalPages) {
-        const res = await axios.get(`/api/foods?page=${page}&size=5`, {
+        const res = await axios.get(`/api/foods?page=${page}&size=1000`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -83,6 +83,7 @@ function ListFood() {
     }
   };
 
+
   useEffect(() => {
     fetchAllFoods();
   }, []);
@@ -130,21 +131,21 @@ function ListFood() {
       key: 'action',
       render: (_, record) => (
         <>
-        <Button 
-        type="primary"
-        size='small'
-        style={{marginRight:8}}
-        onClick={()=>navigate(``)}>
-          Sửa
-        </Button>
-        <Popconfirm
-          title="Bạn có chắc chắn muốn xóa món này?"
-          onConfirm={() => handleDelete(record.id, record.name)}
-          okText="Xóa"
-          cancelText="Hủy"
-        >
-          <Button danger>Xóa</Button>
-        </Popconfirm>
+          <Button
+            type="primary"
+            size='small'
+            style={{ marginRight: 8 }}
+            onClick={() => navigate("/admin/Add-Food", { state: { id: record.id } })}>
+            Sửa
+          </Button>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa món này?"
+            onConfirm={() => handleDelete(record.id, record.name)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button danger>Xóa</Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -153,9 +154,18 @@ function ListFood() {
 
   const handleSearch = (value) => {
     setSearchName(value);
-    const filtered = allFoods.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
-    );
+
+    const filtered = allFoods.filter((item) => {
+      const lowerValue = value.toLowerCase();
+      const priceStr = item.price.toString();
+
+      return (
+        item.name.toLowerCase().includes(lowerValue) || 
+        item.categoryName.toLowerCase().includes(lowerValue) || 
+        priceStr.includes(lowerValue) 
+      );
+    });
+
     setFoods(filtered);
     setPagination((prev) => ({
       ...prev,
@@ -164,45 +174,49 @@ function ListFood() {
     }));
   };
 
+
   return (
-    <div style={{ margin: '20px' }}>
-      <div className="list-food-header">
-        <h3>Quản lý danh mục sản phẩm</h3>
-        <div className="list-food-controls">
-          <input
-            type="text"
-            placeholder="Tên"
-            className="input-control"
-            value={searchName}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-          <div className="btn-group">
-            {/* <Button danger>Xóa mục đã chọn</Button> */}
-            <Button
-              type="primary"
-              onClick={() => navigate("/admin/Add-Food")}
-            >Thêm món</Button>
+    <>
+      <div style={{ margin: '20px' }}>
+        <div className="list-food-header">
+          <h3>Quản lý danh mục sản phẩm</h3>
+          <div className="list-food-controls">
+            <input
+              type="text"
+              placeholder="Tên, danh mục hoặc giá"
+              className="input-control"
+              value={searchName}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+
+            <div className="btn-group">
+              {/* <Button danger>Xóa mục đã chọn</Button> */}
+              <Button
+                type="primary"
+                onClick={() => navigate("/admin/Add-Food")}
+              >Thêm món</Button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <Table
-        columns={columns}
-        dataSource={foods.slice(
-          (pagination.current - 1) * pagination.pageSize,
-          pagination.current * pagination.pageSize
-        )}
-        rowKey="id"
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
-          onChange: (page) => setPagination((prev) => ({ ...prev, current: page })),
-          showSizeChanger: false,
-          position: ['bottomCenter'],
-        }}
-      />
-    </div>
+        <Table
+          columns={columns}
+          dataSource={foods.slice(
+            (pagination.current - 1) * pagination.pageSize,
+            pagination.current * pagination.pageSize
+          )}
+          rowKey="id"
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            onChange: (page) => setPagination((prev) => ({ ...prev, current: page })),
+            showSizeChanger: false,
+            position: ['bottomCenter'],
+          }}
+        />
+      </div>
+    </>
   );
 }
 
