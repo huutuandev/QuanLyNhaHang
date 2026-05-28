@@ -35,10 +35,9 @@ Hệ thống quản lý nhà hàng được xây dựng bằng **Spring Boot**, 
 * VNPay
 * MoMo
 
----
 ### TEST API
 * Postman
-
+---
 ## ⚙️ Chức năng chính
 
 ### 👤 Người dùng
