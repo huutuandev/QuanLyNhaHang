@@ -26,7 +26,7 @@ Hệ thống quản lý nhà hàng được xây dựng bằng **Spring Boot**, 
 
 ### Frontend
 
-* ReactJS / Vite (nếu có)
+* ReactJS / Vite
 * Axios
 * Socket.io / WebSocket client
 
@@ -36,6 +36,8 @@ Hệ thống quản lý nhà hàng được xây dựng bằng **Spring Boot**, 
 * MoMo
 
 ---
+### TEST API
+* Postman
 
 ## ⚙️ Chức năng chính
 
@@ -118,13 +120,13 @@ backend/
   ├── model/
   ├── config/
   ├── security/
-  ├── websocket/
+  ...
 
 frontend/
   ├── src/
   ├── components/
   ├── pages/
-```
+  ...
 
 ---
 
@@ -196,7 +198,7 @@ jwt.secret=your_secret_key
 ## 👨‍💻 Tác giả
 
 * Be: Hữu Tuấn
-* Fe: Công Huy
+* Fe: Công Huy + Hữu Tuấn
 
 ---
 
