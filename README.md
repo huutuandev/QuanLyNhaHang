@@ -195,7 +195,8 @@ jwt.secret=your_secret_key
 
 ## 👨‍💻 Tác giả
 
-* Hữu Tuấn
+* Be: Hữu Tuấn
+* Fe: Công Huy
 
 ---
 
