@@ -1,0 +1,147 @@
+$mainstream: #f9a825;
+
+.Main_SelectTable {
+  background-color: rgb(233 230 230 / 49%);
+
+  .content1-SelectTable {
+    background: linear-gradient(to right, #2e4e7b, #0e1a2b);
+    margin: 0;
+    padding: 10px;
+    height: 300px;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    &__text {
+      h1 {
+        font-size: 50px;
+      }
+
+      a {
+        text-decoration: none;
+        color: white;
+
+        &:hover {
+          color: $mainstream;
+        }
+      }
+
+      .active {
+        color: $mainstream;
+      }
+    }
+  }
+
+  .content2-SelectTable {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .information-Customer {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    min-width: 300px;
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 10px;
+
+      strong {
+        color: #555;
+      }
+    }
+  }
+
+  .choose-table {
+    flex: 1;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .table-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 20px;
+    }
+
+    .table-item {
+      height: auto;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      border: 2px solid transparent;
+      user-select: none;
+      padding: 8px;
+
+      &.available {
+        background-color: #f6ffed;
+        color: #389e0d;
+
+        &:hover {
+          background-color: #d9f7be;
+          transform: translateY(-4px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+      }
+
+      &.unavailable {
+        background-color: #fff1f0;
+        color: #a8071a;
+        cursor: not-allowed;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      &.tooSoon {
+        background-color: #fffbe6;
+        color: #d48806;
+        cursor: not-allowed;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      &.selected {
+        border: 2px solid #1890ff;
+        background-color: #e6f7ff;
+        color: #096dd9;
+      }
+
+      .reserved-time {
+        font-size: 12px;
+        margin-top: 4px;
+        text-align: center;
+        color: #a8071a;
+      }
+    }
+  }
+}

@@ -1,0 +1,234 @@
+$mainstream: #f9a825;
+
+.Main_pay {
+    font-family: "Segoe UI", sans-serif;
+    color: #333;
+
+    .content1-pay {
+        background: linear-gradient(to right, #2e4e7b, #0e1a2b);
+        margin: 0;
+        padding: 10px;
+        height: 300px;
+        text-align: center;
+        color: white;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+        &__text {
+            h1 {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+
+            a {
+                text-decoration: none;
+                color: white;
+                margin: 0 5px;
+
+                &:hover {
+                    color: $mainstream;
+                }
+            }
+
+            .active {
+                color: $mainstream;
+            }
+        }
+    }
+
+    .content2-pay {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 50px;
+        background-color: #f5f5f5;
+
+        .left-panel {
+            width: 60%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+
+            .order-text {
+                font-weight: bold;
+                font-size: 18px;
+                margin-bottom: 15px;
+                color: $mainstream;
+            }
+
+            .scroll-container {
+                max-height: 400px; 
+                overflow-y: auto;
+                padding-right: 10px;
+
+            .selected-food {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #eee;
+
+                .img_food {
+                    width: 60px;
+                    height: 60px;
+                    margin-right: 15px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 6px;
+                        border: 1px solid #ccc;
+                    }
+                }
+
+                .information_food {
+
+                    p {
+                        font-weight: 600;
+                        margin-bottom: 5px;
+                    }
+
+                    span {
+                        font-size: 14px;
+                        color: #666;
+                    }
+                }
+            }
+        }
+    }
+
+        .right-panel {
+            width: 35%;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+                color: #2e4e7b;
+            }
+
+            .input-group {
+                display: flex;
+                margin-bottom: 10px;
+
+                input {
+                    flex: 1;
+                    padding: 8px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px 0 0 4px;
+                    font-size: 14px;
+                }
+
+                button {
+                    padding: 8px 15px;
+                    background-color: $mainstream;
+                    border: none;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 0 4px 4px 0;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    font-size: 14px;
+                }
+
+                @media (max-width: 768px) {
+                    flex-direction: column;
+
+                    input {
+                        border-radius: 4px;
+                        margin-bottom: 10px;
+                    }
+
+                    button {
+                        border-radius: 4px;
+                    }
+                }
+            }
+
+
+            .info-line {
+                display: flex;
+                justify-content: space-between;
+                margin: 8px 0;
+                font-size: 15px;
+            }
+
+            .total-line {
+                background-color: #fff9e6;
+                padding: 12px;
+                font-weight: bold;
+                text-align: center;
+                margin: 15px 0;
+                border-radius: 6px;
+                color: $mainstream;
+            }
+
+            .payment-method {
+                margin-top: 20px;
+
+                p {
+                    margin: 5px 0;
+                    font-size: 15px;
+                }
+
+                .radio-group {
+                    margin-top: 10px;
+
+                    label {
+                        display: block;
+                        margin-bottom: 5px;
+                        font-weight: normal;
+
+                        input {
+                            margin-right: 8px;
+                        }
+                    }
+                }
+            }
+
+            .action-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+
+                .btn-back,
+                .btn-confirm {
+                    flex: 1;
+                    padding: 10px;
+                    font-weight: bold;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .btn-back {
+                    background-color: #e0e0e0;
+                    color: #333;
+                    margin-right: 10px;
+
+                    &:hover {
+                        background-color: #d5d5d5;
+                    }
+                }
+
+                .btn-confirm {
+                    background-color: $mainstream;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken($mainstream, 10%);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+$mainstream: #f9a825;
+
+.Menu {
+    background-color: rgb(233 230 230 / 49%);
+
+    .content1 {
+        background: linear-gradient(to right, #2e4e7b, #0e1a2b);
+        margin: 0;
+        padding: 10px;
+        height: 300px;
+        text-align: center;
+        color: white;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+        &__text {
+            h1 {
+                font-size: 50px;
+            }
+
+            a {
+                text-decoration: none;
+                color: white;
+
+                &:hover {
+                    color: $mainstream;
+                }
+            }
+
+            .active {
+                color: $mainstream;
+            }
+        }
+    }
+}
