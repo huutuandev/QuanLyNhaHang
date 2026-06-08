@@ -8,6 +8,7 @@ import com.restaurant.management.responses.FoodDetailResponse;
 import com.restaurant.management.responses.MixFoodResponse;
 import com.restaurant.management.respository.FoodRepository;
 import com.restaurant.management.respository.ReviewRepository;
+import com.restaurant.management.service.IFoodSearchService;
 import com.restaurant.management.service.IFoodService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,7 @@ public class FoodServiceImpl implements IFoodService {
     private final FoodRepository foodRepository;
     private final ReviewRepository reviewRepository;
     private final ModelMapper modelMapper;
+    private final IFoodSearchService foodSearchService;
 
     @Override
     public FoodDetailResponse getFoodsAndReviews(Long id) {
@@ -150,6 +152,10 @@ public class FoodServiceImpl implements IFoodService {
         foodCategoryEntity.setId(foodDTO.getCategoryId());
         food.setCategory(foodCategoryEntity);
         FoodEntity saved = foodRepository.save(food);
+        
+        // Sync creation/update to Elasticsearch
+        foodSearchService.indexFood(saved.getId());
+        
         return modelMapper.map(saved,FoodDTO.class);
     }
 
@@ -159,6 +165,9 @@ public class FoodServiceImpl implements IFoodService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy"));
         foodEntity.setIsDeleted(true);
         foodRepository.save(foodEntity);
+        
+        // Remove from Elasticsearch index
+        foodSearchService.deindexFood(id);
     }
 
     @Override
@@ -174,6 +183,10 @@ public class FoodServiceImpl implements IFoodService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy món ăn này"));
         food.setIsDeleted(Boolean.FALSE);
         foodRepository.save(food);
+        
+        // Re-index into Elasticsearch
+        foodSearchService.indexFood(id);
+        
         return modelMapper.map(food, FoodDTO.class);
     }
 }

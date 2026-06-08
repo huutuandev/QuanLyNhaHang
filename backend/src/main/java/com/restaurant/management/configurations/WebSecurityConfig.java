@@ -42,6 +42,7 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/categories/*",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET"),
+                                new AntPathRequestMatcher(String.format("%s/search/**", apiPrefix), "GET"),
                                 new AntPathRequestMatcher("/chat-websocket/**"),
                                 new AntPathRequestMatcher(String.format("%s/chat/**", apiPrefix)),
                                 new AntPathRequestMatcher("/swagger-ui/**"),
