@@ -1,7 +1,7 @@
 package com.restaurant.management.service;
 
-import com.restaurant.management.DTO.OrderDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.OrderDTO;
+import com.restaurant.management.dto.UserDTO;
 import org.springframework.data.domain.Page;
 
 public interface IOrderService {

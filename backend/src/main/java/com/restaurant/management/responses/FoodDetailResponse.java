@@ -1,7 +1,7 @@
 package com.restaurant.management.responses;
 
-import com.restaurant.management.DTO.FoodDTO;
-import com.restaurant.management.DTO.ReviewDTO;
+import com.restaurant.management.dto.FoodDTO;
+import com.restaurant.management.dto.ReviewDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

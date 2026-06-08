@@ -1,8 +1,6 @@
 package com.restaurant.management.responses;
 
 
-import com.restaurant.management.DTO.MessageDTO;
-import com.restaurant.management.models.MessageEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,15 +1,16 @@
 package com.restaurant.management.service;
 
 import com.restaurant.management.requests.ChangePasswordRequest;
-import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.DTO.UserLoginDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.models.UserEntity;
+import com.restaurant.management.requests.LoginRequest;
+import com.restaurant.management.requests.RegisterRequest;
 
 import java.util.List;
 
 public interface IUserService {
-    UserEntity createUser(UserDTO userDTO) throws Exception;
-    String login(UserLoginDTO loginDTO) throws Exception;
+    UserEntity register(RegisterRequest registerRequest) throws Exception;
+    String login(LoginRequest loginRequest) throws Exception;
     List<UserDTO> findAll();
     UserDTO findById(Long id);
     UserDTO createOrUpdate(UserDTO userDTO);

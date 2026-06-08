@@ -1,8 +1,8 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.ReservationDTO;
-import com.restaurant.management.DTO.ReservationOrderDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.ReservationDTO;
+import com.restaurant.management.dto.ReservationOrderDTO;
+import com.restaurant.management.dto.UserDTO;
 
 
 import com.restaurant.management.constant.BillStatusConstant;
@@ -10,6 +10,7 @@ import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.models.BillEntity;
 import com.restaurant.management.models.ReservationEntity;
 import com.restaurant.management.models.ReservationOrderEntity;
+import com.restaurant.management.models.TableEntity;
 import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IReservationService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class ReservationServiceImpl implements IReservationService {
     private final FoodRepository foodRepo;
     private final BillRepository billRepo;
     private final ModelMapper modelMapper;
+    private final TableRepository tableRepository;
+    private static final int DEFAULT_DURATION_HOURS = 2;
 
     @Override
     public ReservationDTO createOrUpdate(UserDTO userDTO, ReservationDTO dto) {
@@ -44,6 +48,8 @@ public class ReservationServiceImpl implements IReservationService {
         mapDtoToEntity(dto, reservation);
         reservation.setCustomer(userRepo.findById(userDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userDTO.getId())));
+        TableEntity assignedTable = autoAssignTable(dto);
+        reservation.setTable(assignedTable);
         setReservationOrders(dto, reservation);
         checkUserAlreadyBookedOnDate(userDTO, dto);
         ReservationEntity saved = reservationRepo.save(reservation);
@@ -146,6 +152,67 @@ public class ReservationServiceImpl implements IReservationService {
             // ❌ Nếu có bất kỳ bản ghi nào khác → lỗi
             throw new RuntimeException("Bạn đã đặt bàn vào ngày " + reservationDate + ". Không thể đặt thêm.");
         }
+    }
+
+    private TableEntity autoAssignTable(ReservationDTO dto) {
+        LocalTime newStart = dto.getReservationTime();
+        LocalTime newEnd = newStart.plusHours(DEFAULT_DURATION_HOURS);
+
+        List<TableEntity> allActiveTables = tableRepository.findAll();
+
+        TableEntity bestTable = null;
+        int minSuitableCapacity = Integer.MAX_VALUE;
+
+        for (TableEntity table : allActiveTables) {
+            if (table.getCapacity() < dto.getNumberOfGuests()) {
+                continue;
+            }
+
+            boolean isTableFree = isTableFree(
+                    table,
+                    dto.getReservationDate(),
+                    newStart,
+                    newEnd,
+                    dto.getId()
+            );
+
+            if (isTableFree && table.getCapacity() < minSuitableCapacity) {
+                bestTable = table;
+                minSuitableCapacity = table.getCapacity();
+            }
+        }
+
+        if (bestTable == null) {
+            throw new RuntimeException("Không có bàn nào phù hợp cho "
+                    + dto.getNumberOfGuests() + " khách vào khung giờ này.");
+        }
+
+        return bestTable;
+    }
+
+    // ===================== CORE CHECK: BÀN TRỐNG =====================
+    private boolean isTableFree(TableEntity table, LocalDate date,
+                                LocalTime newStart, LocalTime newEnd,
+                                Long currentReservationId) {   // ← Thêm param này
+
+        List<ReservationEntity> bookings = reservationRepo
+                .findByTableIdAndReservationDate(table.getId(), date);
+
+        return bookings.stream()
+                .noneMatch(existing -> {
+                    // ==================== QUAN TRỌNG ====================
+                    // Bỏ qua chính reservation đang được update
+                    if (currentReservationId != null &&
+                            existing.getId().equals(currentReservationId)) {
+                        return false;
+                    }
+
+                    LocalTime existingStart = existing.getReservationTime();
+                    LocalTime existingEnd = existingStart.plusHours(DEFAULT_DURATION_HOURS);
+
+                    // Overlap condition
+                    return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
+                });
     }
 
 

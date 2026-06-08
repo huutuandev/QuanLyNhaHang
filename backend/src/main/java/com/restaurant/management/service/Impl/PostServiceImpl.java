@@ -1,7 +1,7 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.PostDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.PostDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.PostEntity;
 import com.restaurant.management.models.UserEntity;

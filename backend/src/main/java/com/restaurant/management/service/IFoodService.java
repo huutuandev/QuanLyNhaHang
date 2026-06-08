@@ -1,6 +1,6 @@
 package com.restaurant.management.service;
 
-import com.restaurant.management.DTO.FoodDTO;
+import com.restaurant.management.dto.FoodDTO;
 import com.restaurant.management.responses.FoodDetailResponse;
 import com.restaurant.management.responses.MixFoodResponse;
 import org.springframework.data.domain.Page;

@@ -1,10 +1,7 @@
 package com.restaurant.management.service;
 
-import com.restaurant.management.DTO.ChatSessionDTO;
-import com.restaurant.management.DTO.MessageDTO;
-import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.models.ChatSessionEntity;
-import com.restaurant.management.models.MessageEntity;
+import com.restaurant.management.dto.ChatSessionDTO;
+import com.restaurant.management.dto.MessageDTO;
 
 import java.util.List;
 

@@ -1,8 +1,9 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.BillDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.BillDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.constant.BillStatusConstant;
+import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.models.*;
 import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.respository.BillRepository;
@@ -12,6 +13,7 @@ import com.restaurant.management.respository.UserRepository;
 import com.restaurant.management.service.IBillService;
 import com.restaurant.management.service.ITableService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillServiceImpl implements IBillService {
@@ -129,5 +132,46 @@ public class BillServiceImpl implements IBillService {
 
         TableEntity chosenTable = availableTables.get(new Random().nextInt(availableTables.size()));
         reservation.setTable(chosenTable);
+    }
+
+    @Override
+    @Transactional
+    public void processPaymentIPN(Long reservationId, String paymentMethod, double amount) {
+        log.info("Processing IPN payment for Reservation ID: {}, Method: {}, Amount: {}", reservationId, paymentMethod, amount);
+        
+        ReservationEntity reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found: " + reservationId));
+                
+        BillEntity bill = billRepository.findByReservationId(reservationId);
+        if (bill == null) {
+            throw new RuntimeException("Bill not found for reservation ID: " + reservationId);
+        }
+        
+        // Prevent duplicate processing
+        if (BillStatusConstant.DEPOSIT_PAID.equals(bill.getPaymentStatus())) {
+            log.info("IPN payment already processed for Reservation ID: {}. Skipping.", reservationId);
+            return;
+        }
+        
+        // Validate amount (allow minor rounding differences)
+        if (amount < bill.getPaidAmount() * 0.95) {
+            log.warn("Payment amount mismatch! Expected: {}, Received: {}", bill.getPaidAmount(), amount);
+            throw new IllegalArgumentException("Payment amount is incorrect");
+        }
+        
+        bill.setPaymentStatus(BillStatusConstant.DEPOSIT_PAID);
+        bill.setPaidAt(LocalDateTime.now());
+        bill.setPaymentMethod(paymentMethod);
+        
+        // Confirm reservation table
+        if (reservation.getTable() == null) {
+            assignTableToReservation(reservation);
+        }
+        reservation.setStatus(ReservationStatusConstant.CONFIRMED);
+        
+        billRepository.save(bill);
+        reservationRepository.save(reservation);
+        
+        log.info("IPN payment successfully processed and reservation confirmed for Reservation ID: {}", reservationId);
     }
 }

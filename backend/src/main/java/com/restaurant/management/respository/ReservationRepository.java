@@ -55,4 +55,9 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     Page<ReservationEntity> findAllByIsDeletedFalse(Pageable pageable);
     List<ReservationEntity> findAllByCustomerIdAndReservationDate(Long customerId, LocalDate reservationDate);
 
+    @Query("SELECT r FROM ReservationEntity r " +
+            "WHERE r.reservationDate = :date " +
+            "AND r.isDeleted = false " +
+            "AND r.table.id = :tableId")
+    List<ReservationEntity> findByTableIdAndReservationDate(Long tableId, LocalDate date);
 }

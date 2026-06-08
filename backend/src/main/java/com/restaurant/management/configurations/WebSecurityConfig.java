@@ -34,6 +34,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/auth/register", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/auth/login", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/auth/refresh", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/auth/logout", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/categories",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/posts/*",apiPrefix),"GET"),
@@ -41,7 +43,12 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/home",apiPrefix),"GET"),
                                 new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"GET"),
                                 new AntPathRequestMatcher("/chat-websocket/**"),
-                                new AntPathRequestMatcher(String.format("%s/chat/**", apiPrefix))
+                                new AntPathRequestMatcher(String.format("%s/chat/**", apiPrefix)),
+                                new AntPathRequestMatcher("/swagger-ui/**"),
+                                new AntPathRequestMatcher("/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/swagger-ui.html"),
+                                new AntPathRequestMatcher(String.format("%s/payment/vnpay/ipn", apiPrefix), "POST"),
+                                new AntPathRequestMatcher(String.format("%s/payment/momo/ipn", apiPrefix), "POST")
                         )
                         .permitAll()
                         .requestMatchers(

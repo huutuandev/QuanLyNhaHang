@@ -1,4 +1,4 @@
-package com.restaurant.management.DTO;
+package com.restaurant.management.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

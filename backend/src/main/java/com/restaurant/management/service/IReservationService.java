@@ -1,13 +1,8 @@
 package com.restaurant.management.service;
 
-import com.restaurant.management.DTO.ReservationDTO;
-import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.responses.UnavailableTableResponse;
+import com.restaurant.management.dto.ReservationDTO;
+import com.restaurant.management.dto.UserDTO;
 import org.springframework.data.domain.Page;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 public interface IReservationService {
     ReservationDTO createOrUpdate(UserDTO userDTO, ReservationDTO dto);

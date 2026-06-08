@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -104,5 +105,27 @@ public class MomoServiceImpl implements IMoMoService {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    @Override
+    public boolean verifySignature(Map<String, String> params, String secureHash) throws Exception {
+        String amount = params.get("amount");
+        String extraData = params.getOrDefault("extraData", "");
+        String message = params.get("message");
+        String orderId = params.get("orderId");
+        String orderInfo = params.get("orderInfo");
+        String partnerCode = params.get("partnerCode");
+        String requestId = params.get("requestId");
+        String responseTime = params.get("responseTime");
+        String resultCode = params.get("resultCode");
+        String transId = params.get("transId");
+
+        String rawSignature = String.format(
+                "accessKey=%s&amount=%s&extraData=%s&message=%s&orderId=%s&orderInfo=%s&partnerCode=%s&requestId=%s&responseTime=%s&resultCode=%s&transId=%s",
+                ACCESS_KEY, amount, extraData, message, orderId, orderInfo, partnerCode, requestId, responseTime, resultCode, transId
+        );
+
+        String secureHashCheck = signHmacSHA256(rawSignature, SECRET_KEY);
+        return secureHashCheck != null && secureHashCheck.equalsIgnoreCase(secureHash);
     }
 }

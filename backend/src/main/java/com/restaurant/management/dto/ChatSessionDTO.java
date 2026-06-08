@@ -1,8 +1,7 @@
-package com.restaurant.management.DTO;
+package com.restaurant.management.dto;
 
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

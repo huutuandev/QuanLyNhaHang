@@ -29,6 +29,10 @@ public class TableEntity {
     @OneToMany(mappedBy = "table")
     private List<ReservationEntity> reservations = new ArrayList<>();
 
+
+    @Column(nullable = true)
+    private int capacity;
+
     @PrePersist
     public void prePersist() {
         if (status == null) status = "Available";

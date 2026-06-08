@@ -1,8 +1,8 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.OrderDTO;
-import com.restaurant.management.DTO.OrderItemDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.OrderDTO;
+import com.restaurant.management.dto.OrderItemDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.constant.OrderStatusConstant;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.OrderEntity;

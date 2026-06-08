@@ -1,6 +1,6 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.*;
+import com.restaurant.management.dto.*;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.FoodCategoryEntity;
 import com.restaurant.management.models.FoodEntity;

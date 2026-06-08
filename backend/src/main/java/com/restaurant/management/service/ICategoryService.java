@@ -1,6 +1,6 @@
 package com.restaurant.management.service;
 
-import com.restaurant.management.DTO.FoodCategoryDTO;
+import com.restaurant.management.dto.FoodCategoryDTO;
 
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.ReviewDTO;
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.ReviewDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.constant.ReservationStatusConstant;
 import com.restaurant.management.customexceptions.ResourceNotFoundException;
 import com.restaurant.management.models.FoodReviewEntity;

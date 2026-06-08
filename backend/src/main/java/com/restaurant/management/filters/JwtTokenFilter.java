@@ -1,10 +1,11 @@
 package com.restaurant.management.filters;
 
-import com.restaurant.management.DTO.UserDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.components.JwtTokenUtil;
 import com.restaurant.management.models.UserEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -42,9 +44,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String servletPath = request.getServletPath();
-            System.out.println("Request path: " + servletPath + ", Method: " + request.getMethod());
+            log.info("Request path: {}, Method: {}", servletPath, request.getMethod());
             if (isBypassToken(request)) {
-                System.out.println("Bypassing token for: " + servletPath);
+                log.info("Bypassing token for: {}", servletPath);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -78,9 +80,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 if (needSetAuth) {
                     UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
                     List<String> roles = userDetails.getAuthorities()
-                            .stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.toList());
+                             .stream()
+                             .map(GrantedAuthority::getAuthority)
+                             .collect(Collectors.toList());
                     if (jwtTokenUtil.validateToken(token, userDetails)) {
                         UserDTO userDTO = UserDTO.builder()
                                 .id(userDetails.getId())
@@ -110,11 +112,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/foods/*", apiPrefix), "GET"),
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/refresh", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/logout", apiPrefix), "POST"),
                 Pair.of(String.format("%s/categories", apiPrefix), "GET"),
                 Pair.of(String.format("%s/posts", apiPrefix), "GET"),
                 Pair.of(String.format("%s/posts/*", apiPrefix), "GET"),
                 Pair.of(String.format("%s/categories/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/home", apiPrefix), "GET")
+                Pair.of(String.format("%s/home", apiPrefix), "GET"),
+                Pair.of(String.format("%s/payment/vnpay/ipn", apiPrefix), "POST"),
+                Pair.of(String.format("%s/payment/momo/ipn", apiPrefix), "POST"),
+                Pair.of("/swagger-ui", "GET"),
+                Pair.of("/v3/api-docs", "GET"),
+                Pair.of("/swagger-ui.html", "GET")
         );
         for (Pair<String, String> bypassToken : bypassTokens) {
             if (request.getServletPath().contains(bypassToken.getFirst()) &&

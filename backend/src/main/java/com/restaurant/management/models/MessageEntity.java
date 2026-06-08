@@ -16,7 +16,7 @@ public class MessageEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "SessionId", nullable = false)
+    @JoinColumn(name = "SessionId", nullable = true)
     private ChatSessionEntity session;
 
     @Column(name = "SenderPhone", nullable = true, length = 50)

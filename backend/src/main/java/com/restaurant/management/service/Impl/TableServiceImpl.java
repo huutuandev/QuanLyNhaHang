@@ -1,6 +1,6 @@
 package com.restaurant.management.service.Impl;
 
-import com.restaurant.management.DTO.TableDTO;
+import com.restaurant.management.dto.TableDTO;
 import com.restaurant.management.models.TableEntity;
 import com.restaurant.management.respository.ReservationRepository;
 import com.restaurant.management.respository.TableRepository;

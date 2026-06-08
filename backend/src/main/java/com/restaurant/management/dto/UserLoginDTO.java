@@ -1,5 +1,4 @@
-package com.restaurant.management.DTO;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.restaurant.management.dto;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

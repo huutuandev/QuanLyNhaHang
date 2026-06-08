@@ -1,18 +1,18 @@
 package com.restaurant.management.service.Impl;
 
 import com.restaurant.management.requests.ChangePasswordRequest;
-import com.restaurant.management.DTO.UserDTO;
-import com.restaurant.management.DTO.UserLoginDTO;
+import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.components.JwtTokenUtil;
 import com.restaurant.management.constant.RoleConstants;
 import com.restaurant.management.customexceptions.DataNotFoundException;
-import com.restaurant.management.customexceptions.PermissionDenyException;
 import com.restaurant.management.models.RoleEntity;
 import com.restaurant.management.models.UserEntity;
+import com.restaurant.management.requests.RegisterRequest;
 import com.restaurant.management.respository.RoleRepository;
 import com.restaurant.management.respository.UserRepository;
 import com.restaurant.management.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
@@ -41,38 +42,34 @@ public class UserServiceImpl implements IUserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserEntity createUser(UserDTO userDTO) throws Exception {
-        if(userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
+    public UserEntity register(RegisterRequest registerRequest) throws Exception {
+        String phone = registerRequest.getPhone();
+        if(userRepository.existsByPhoneNumber(phone)) {
             throw new DataIntegrityViolationException("Phone number already exists");
         }
 
+        RoleEntity customerRole = roleRepository.findByRoleName(RoleConstants.USER)
+                .orElseThrow(() -> new DataNotFoundException("Default role CUSTOMER not found"));
+
         List<RoleEntity> roles = new ArrayList<>();
-        for (Long roleId : userDTO.getRoleIds()) {
-            RoleEntity role = roleRepository.findById(roleId)
-                    .orElseThrow(() -> new DataNotFoundException("Role not found with id: " + roleId));
-            if (RoleConstants.ADMIN.equalsIgnoreCase(role.getRoleName())) {
-                throw new PermissionDenyException("You cannot register an admin account");
-            }
-            roles.add(role);
-        }
+        roles.add(customerRole);
 
         UserEntity newUser = UserEntity.builder()
-                .fullName(userDTO.getFullName())
-                .phoneNumber(userDTO.getPhoneNumber())
-                .passwordHash(passwordEncoder.encode(userDTO.getPassword()))
-                .email(userDTO.getEmail())
-                .imageUrl(userDTO.getImageUrl())
+                .fullName(registerRequest.getUsername())
+                .phoneNumber(phone)
+                .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
+                .email(registerRequest.getEmail())
                 .roles(roles)
                 .build();
         return userRepository.save(newUser);
     }
 
     @Override
-    public String login(UserLoginDTO loginDTO) throws Exception {
-        String phoneNumber = loginDTO.getPhoneNumber();
-        String password = loginDTO.getPassword();
+    public String login(com.restaurant.management.requests.LoginRequest loginRequest) throws Exception {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
 
-        Optional<UserEntity> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+        Optional<UserEntity> optionalUser = userRepository.findByPhoneNumber(username);
         if (!optionalUser.isPresent()) {
             throw new DataNotFoundException("Invalid phone number or password");
         }
@@ -81,8 +78,8 @@ public class UserServiceImpl implements IUserService {
             throw new BadCredentialsException("Wrong phone number or password");
         }
         UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(phoneNumber, password, user.getAuthorities());
-        System.out.println("Role là"+user.getAuthorities());
+                new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
+        log.info("Role là: {}", user.getAuthorities());
         authenticationManager.authenticate(authToken);
         return jwtTokenUtil.generateToken(user);
     }

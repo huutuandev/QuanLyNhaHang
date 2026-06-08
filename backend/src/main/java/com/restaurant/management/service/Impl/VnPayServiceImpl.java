@@ -138,4 +138,26 @@ public class VnPayServiceImpl implements IVnPayService {
         return hash.toString();
     }
 
+    @Override
+    public boolean verifySignature(Map<String, String> params, String secureHash) throws Exception {
+        Map<String, String> cleanParams = new HashMap<>(params);
+        cleanParams.remove("vnp_SecureHash");
+        cleanParams.remove("vnp_SecureHashType");
+
+        List<String> fieldNames = new ArrayList<>(cleanParams.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        for (int i = 0; i < fieldNames.size(); i++) {
+            String fieldName = fieldNames.get(i);
+            String fieldValue = cleanParams.get(fieldName);
+            if (fieldValue != null && fieldValue.length() > 0) {
+                hashData.append(fieldName).append("=").append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.name()));
+                if (i < fieldNames.size() - 1) {
+                    hashData.append("&");
+                }
+            }
+        }
+        String secureHashCheck = hmacSHA512(vnp_HashSecret, hashData.toString());
+        return secureHashCheck != null && secureHashCheck.equalsIgnoreCase(secureHash);
+    }
 }
