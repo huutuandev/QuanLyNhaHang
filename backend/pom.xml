@@ -6,7 +6,7 @@
 	<groupId>com.restaurant</groupId>
 	<artifactId>restaurant-management</artifactId>
 	<version>1.0.0</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 
 	<name>restaurant-management</name>
