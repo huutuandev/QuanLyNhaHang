@@ -9,4 +9,7 @@ import lombok.*;
 public class CreatePaymentRequest {
     private long amount;
     private String orderInfo;
+    private String paymentType;
+    private Long referenceId;
+
 }
