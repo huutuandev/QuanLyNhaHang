@@ -5,6 +5,7 @@ import com.restaurant.management.dto.UserDTO;
 import com.restaurant.management.responses.ApiResponse;
 import com.restaurant.management.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,16 +53,21 @@ public class UserController {
 
     @GetMapping("/profile")
     @Operation(summary = "Get current user profile", description = "Retrieves details of the currently authenticated user session.")
-    public ResponseEntity<ApiResponse<UserDTO>> getProfile(@AuthenticationPrincipal UserDTO user) {
-        log.info("Fetching user profile for authenticated session user: {}", user.getPhoneNumber());
-        return ResponseEntity.ok(ApiResponse.success("User profile retrieved successfully", user));
+    public ResponseEntity<ApiResponse<UserDTO>> getProfile(
+            @Parameter(hidden = true) @AuthenticationPrincipal com.restaurant.management.security.CustomUserDetails currentUser
+    ) {
+        log.info("Fetching user profile for authenticated session user: {}", currentUser.getPhoneNumber());
+        UserDTO userDTO = userService.findById(currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success("User profile retrieved successfully", userDTO));
     }
 
     @PutMapping("/change-password")
     @Operation(summary = "Change user password", description = "Allows current authenticated user to change their password after validating the old password.")
-    public ResponseEntity<ApiResponse<String>> changePassword(@Valid @RequestBody ChangePasswordRequest dto,
-                                                            @AuthenticationPrincipal UserDTO userDTO) {
-        String phone = userDTO.getPhoneNumber();
+    public ResponseEntity<ApiResponse<String>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest dto,
+            @Parameter(hidden = true) @AuthenticationPrincipal com.restaurant.management.security.CustomUserDetails currentUser
+    ) {
+        String phone = currentUser.getPhoneNumber();
         log.info("Request to change password for user phone: {}", phone);
         userService.changePassword(phone, dto);
         return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", "Đổi mật khẩu thành công"));

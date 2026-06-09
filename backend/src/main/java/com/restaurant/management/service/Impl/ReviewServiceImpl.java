@@ -8,6 +8,7 @@ import com.restaurant.management.models.FoodReviewEntity;
 import com.restaurant.management.models.UserEntity;
 import com.restaurant.management.respository.ReservationOrderRepository;
 import com.restaurant.management.respository.ReviewRepository;
+import com.restaurant.management.respository.UserRepository;
 import com.restaurant.management.service.IReviewService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,13 +20,14 @@ public class ReviewServiceImpl implements IReviewService {
 
     private final ReservationOrderRepository reservationOrderRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     @Override
-    public ReviewDTO createOrUpdate(UserDTO userDTO, ReviewDTO reviewDTO) {
+    public ReviewDTO createOrUpdate(Long userId, ReviewDTO reviewDTO) {
         boolean hasOrdered = reservationOrderRepository
                 .existsByReservation_Customer_IdAndFood_IdAndReservation_Status(
-                        userDTO.getId(),
+                        userId,
                         reviewDTO.getFoodId(),
                         ReservationStatusConstant.CONFIRMED
                 );
@@ -37,14 +39,16 @@ public class ReviewServiceImpl implements IReviewService {
         if (reviewDTO.getId() != null) {
             review = reviewRepository.findById(reviewDTO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đánh giá với ID: " + reviewDTO.getId()));
-            if (userDTO.getId() == null || review.getUser().getId() != userDTO.getId()) {
+            if (userId == null || !review.getUser().getId().equals(userId)) {
                 throw new IllegalArgumentException("Bạn không được phép chỉnh sửa đánh giá của người khác.");
             }
             review.setComment(reviewDTO.getComment());
             review.setRating(reviewDTO.getRating());
         } else {
             review = modelMapper.map(reviewDTO, FoodReviewEntity.class);
-            review.setUser(modelMapper.map(userDTO, UserEntity.class));
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+            review.setUser(user);
         }
 
         FoodReviewEntity saved = reviewRepository.save(review);
@@ -52,11 +56,11 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public void deleteById(Long id, UserDTO userDTO) {
+    public void deleteById(Long id, Long userId) {
         FoodReviewEntity review = reviewRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bình luận có id = " + id));
 
-        if (review.getUser().getId() != userDTO.getId()) {
+        if (!review.getUser().getId().equals(userId)) {
             throw new RuntimeException("Bạn không thể xóa bình luận của người khác");
         }
         reviewRepository.deleteById(id);

@@ -60,9 +60,16 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/review/**",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/profile", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/change-password", apiPrefix)),
-                                new AntPathRequestMatcher(String.format("%s/payment/**", apiPrefix),"POST"),
-                                new AntPathRequestMatcher(String.format("%s/users/change-password", apiPrefix))
+                                new AntPathRequestMatcher(String.format("%s/payment/**", apiPrefix),"POST")
                         ).hasAnyRole(RoleConstants.USER, RoleConstants.ADMIN)
+                        .requestMatchers(
+                                new AntPathRequestMatcher(String.format("%s/favorites", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/favorites/**", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/cart", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/cart/**", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/orders", apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/orders/**", apiPrefix))
+                        ).hasAnyRole(RoleConstants.USER, RoleConstants.ADMIN, RoleConstants.STAFF)
                         .requestMatchers(
                                 new AntPathRequestMatcher(String.format("%s/posts",apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/categories",apiPrefix),"POST"),
@@ -71,11 +78,9 @@ public class WebSecurityConfig {
                                 new AntPathRequestMatcher(String.format("%s/tables",apiPrefix),"POST"),
                                 new AntPathRequestMatcher(String.format("%s/foods/**",apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/dashboard/**",apiPrefix)),
+                                new AntPathRequestMatcher(String.format("%s/admin/orders/**", apiPrefix)),
                                 new AntPathRequestMatcher(String.format("%s/users/**", apiPrefix))
                         ).hasRole(RoleConstants.ADMIN)
-                        .requestMatchers(
-                                new AntPathRequestMatcher(String.format("%s/orders/**",apiPrefix))
-                        ).hasRole(RoleConstants.STAFF)
                         .anyRequest().authenticated()
 
                 );

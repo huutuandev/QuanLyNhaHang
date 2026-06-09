@@ -36,8 +36,8 @@ public class BillServiceImpl implements IBillService {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<BillDTO> getAllBillByUser(UserDTO userDTO) {
-        List<BillEntity> billEntities = billRepository.findByCashierId(userDTO.getId());
+    public List<BillDTO> getAllBillByUser(Long userId) {
+        List<BillEntity> billEntities = billRepository.findByCashierId(userId);
         return billEntities.stream()
                 .map(billEntity -> modelMapper.map(billEntity, BillDTO.class))
                 .collect(Collectors.toList());
@@ -50,13 +50,13 @@ public class BillServiceImpl implements IBillService {
     }
 
     @Override
-    public BillDTO createBill(BillDTO billDTO, UserDTO userDTO) {
+    public BillDTO createBill(BillDTO billDTO, Long userId) {
         boolean hasOrder = billDTO.getOrderId() != null;
         boolean hasReservation = billDTO.getReservationId() != null;
         if (hasOrder == hasReservation) {
             throw new RuntimeException("Lỗi Giao Diện");
         }
-        UserEntity user = userRepository.findById(userDTO.getId())
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
         BillEntity.BillEntityBuilder builder = BillEntity.builder()
                 .cashier(user)

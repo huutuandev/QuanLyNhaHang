@@ -1,11 +1,12 @@
 package com.restaurant.management.controller;
 
 import com.restaurant.management.dto.BillDTO;
-import com.restaurant.management.dto.UserDTO;
+import com.restaurant.management.security.CustomUserDetails;
 import com.restaurant.management.requests.ConfirmPaymentRequest;
 import com.restaurant.management.responses.ApiResponse;
 import com.restaurant.management.service.IBillService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +29,11 @@ public class BillController {
 
     @GetMapping
     @Operation(summary = "Get all bills by user", description = "Retrieves a list of all bills processed by the authenticated cashier.")
-    public ResponseEntity<ApiResponse<List<BillDTO>>> getAllBillByUser(@AuthenticationPrincipal UserDTO userDTO){
-        log.info("Fetching all bills for cashier ID: {}", userDTO.getId());
-        List<BillDTO> billDTOS = billService.getAllBillByUser(userDTO);
+    public ResponseEntity<ApiResponse<List<BillDTO>>> getAllBillByUser(
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails currentUser
+    ){
+        log.info("Fetching all bills for cashier ID: {}", currentUser.getId());
+        List<BillDTO> billDTOS = billService.getAllBillByUser(currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Bills retrieved successfully", billDTOS));
     }
 
@@ -44,9 +47,12 @@ public class BillController {
 
     @PostMapping
     @Operation(summary = "Create a new bill", description = "Creates a billing record for an order or a booking reservation.")
-    public ResponseEntity<ApiResponse<BillDTO>> createBill(@Valid @RequestBody BillDTO billDTO, @AuthenticationPrincipal UserDTO userDTO){
-        log.info("Creating a new bill by cashier ID: {}", userDTO.getId());
-        BillDTO createdBill = billService.createBill(billDTO, userDTO);
+    public ResponseEntity<ApiResponse<BillDTO>> createBill(
+            @Valid @RequestBody BillDTO billDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails currentUser
+    ){
+        log.info("Creating a new bill by cashier ID: {}", currentUser.getId());
+        BillDTO createdBill = billService.createBill(billDTO, currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Bill created successfully", createdBill));
     }
 

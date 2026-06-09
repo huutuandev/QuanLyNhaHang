@@ -14,12 +14,15 @@ import com.restaurant.management.models.TableEntity;
 import com.restaurant.management.respository.*;
 import com.restaurant.management.service.IReservationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +32,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationRepository reservationRepo;
@@ -40,18 +44,18 @@ public class ReservationServiceImpl implements IReservationService {
     private static final int DEFAULT_DURATION_HOURS = 2;
 
     @Override
-    public ReservationDTO createOrUpdate(UserDTO userDTO, ReservationDTO dto) {
+    public ReservationDTO createOrUpdate(Long userId, ReservationDTO dto) {
         ReservationEntity reservation = dto.getId() != null
                 ? reservationRepo.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Reservation not found with id: " + dto.getId()))
                 : new ReservationEntity();
         mapDtoToEntity(dto, reservation);
-        reservation.setCustomer(userRepo.findById(userDTO.getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userDTO.getId())));
+        reservation.setCustomer(userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userId)));
         TableEntity assignedTable = autoAssignTable(dto);
         reservation.setTable(assignedTable);
         setReservationOrders(dto, reservation);
-        checkUserAlreadyBookedOnDate(userDTO, dto);
+        checkUserAlreadyBookedOnDate(userId, dto);
         ReservationEntity saved = reservationRepo.save(reservation);
         return modelMapper.map(saved, ReservationDTO.class);
     }
@@ -142,10 +146,10 @@ public class ReservationServiceImpl implements IReservationService {
         return modelMapper.map(reservation, ReservationDTO.class);
     }
 
-    private void checkUserAlreadyBookedOnDate(UserDTO userDTO, ReservationDTO dto) {
+    private void checkUserAlreadyBookedOnDate(Long userId, ReservationDTO dto) {
         LocalDate reservationDate = dto.getReservationDate();
         List<ReservationEntity> existingReservations = reservationRepo
-                .findAllByCustomerIdAndReservationDate(userDTO.getId(), reservationDate);
+                .findAllByCustomerIdAndReservationDate(userId, reservationDate);
         for (ReservationEntity existing : existingReservations) {
             // Nếu là cập nhật chính bản ghi hiện tại thì bỏ qua
             if (dto.getId() != null && existing.getId().equals(dto.getId())) continue;
@@ -215,5 +219,33 @@ public class ReservationServiceImpl implements IReservationService {
                 });
     }
 
+    @Override
+    @Transactional
+    public void updatePaymentStatus(Long reservationId, String paymentStatus, String transId) {
+        ReservationEntity reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id: " + reservationId));
 
+        BillEntity bill = billRepo.findByReservationId(reservationId);
+        if (bill == null) {
+            bill = BillEntity.builder()
+                    .reservation(reservation)
+                    .totalAmount(0.0)
+                    .paidAmount(0.0)
+                    .paymentMethod("MOMO")
+                    .paymentStatus(BillStatusConstant.DEPOSIT_PAID)
+                    .paidAt(LocalDateTime.now())
+                    .build();
+        } else {
+            bill.setPaymentStatus(BillStatusConstant.DEPOSIT_PAID);
+            bill.setPaidAt(LocalDateTime.now());
+            bill.setPaymentMethod("MOMO");
+        }
+        billRepo.save(bill);
+
+        reservation.setStatus(ReservationStatusConstant.CONFIRMED);
+        reservationRepo.save(reservation);
+
+        log.info("Reservation payment updated successfully. Reservation ID: {}, transId: {}", reservationId, transId);
+    }
 }
+

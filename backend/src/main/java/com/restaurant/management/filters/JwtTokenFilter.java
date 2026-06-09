@@ -59,7 +59,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: No token");
                 return;
             }
-            String token = authHeader.substring(7);
+                        String token = authHeader.substring(7);
             String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
             if (phoneNumber != null) {
                 Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
@@ -68,8 +68,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if (currentAuth == null) {
                     needSetAuth = true;
-                } else if (currentAuth.getPrincipal() instanceof UserDTO) {
-                    String currentPhone = ((UserDTO) currentAuth.getPrincipal()).getPhoneNumber();
+                } else if (currentAuth.getPrincipal() instanceof com.restaurant.management.security.CustomUserDetails) {
+                    String currentPhone = ((com.restaurant.management.security.CustomUserDetails) currentAuth.getPrincipal()).getPhoneNumber();
                     if (!phoneNumber.equals(currentPhone)) {
                         needSetAuth = true;
                     }
@@ -78,21 +78,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
 
                 if (needSetAuth) {
-                    UserEntity userDetails = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
-                    List<String> roles = userDetails.getAuthorities()
-                             .stream()
-                             .map(GrantedAuthority::getAuthority)
-                             .collect(Collectors.toList());
-                    if (jwtTokenUtil.validateToken(token, userDetails)) {
-                        UserDTO userDTO = UserDTO.builder()
-                                .id(userDetails.getId())
-                                .fullName(userDetails.getFullName())
-                                .phoneNumber(userDetails.getPhoneNumber())
-                                .email(userDetails.getEmail())
-                                .roleNames(roles)
-                                .build();
+                    UserEntity userEntity = (UserEntity) userDetailsService.loadUserByUsername(phoneNumber);
+                    if (jwtTokenUtil.validateToken(token, userEntity)) {
+                        com.restaurant.management.security.CustomUserDetails customUserDetails = com.restaurant.management.security.CustomUserDetails.build(userEntity);
                         UsernamePasswordAuthenticationToken authenticationToken =
-                                new UsernamePasswordAuthenticationToken(userDTO, null, userDetails.getAuthorities());
+                                new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     } else {

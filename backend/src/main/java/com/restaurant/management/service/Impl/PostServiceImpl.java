@@ -41,7 +41,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PostDTO createOrUpdate(PostDTO postDTO, UserDTO userDTO) {
+    public PostDTO createOrUpdate(PostDTO postDTO, Long userId) {
         PostEntity post;
         if(postDTO.getId() != null){
             post = postRepository.findById(postDTO.getId())
@@ -53,7 +53,7 @@ public class PostServiceImpl implements IPostService {
             post = modelMapper.map(postDTO, PostEntity.class);
         }
         UserEntity author = new UserEntity();
-        author.setId(userDTO.getId());
+        author.setId(userId);
         post.setAuthor(author);
         PostEntity saved = postRepository.save(post);
         return modelMapper.map(saved,PostDTO.class);

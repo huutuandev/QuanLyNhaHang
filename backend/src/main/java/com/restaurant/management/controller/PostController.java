@@ -1,11 +1,12 @@
 package com.restaurant.management.controller;
 
 import com.restaurant.management.dto.PostDTO;
-import com.restaurant.management.dto.UserDTO;
+import com.restaurant.management.security.CustomUserDetails;
 import com.restaurant.management.responses.ApiResponse;
 import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.service.IPostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,9 +49,12 @@ public class PostController {
 
     @PostMapping
     @Operation(summary = "Create or update post", description = "Creates a new blog post or updates an existing one.")
-    public ResponseEntity<ApiResponse<String>> creatOrUpdate(@Valid @RequestBody PostDTO postDTO, @AuthenticationPrincipal UserDTO userDTO){
-        log.info("Creating/updating blog post: {} by User ID: {}", postDTO.getTitle(), userDTO.getId());
-        postService.createOrUpdate(postDTO, userDTO);
+    public ResponseEntity<ApiResponse<String>> creatOrUpdate(
+            @Valid @RequestBody PostDTO postDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails currentUser
+    ){
+        log.info("Creating/updating blog post: {} by User ID: {}", postDTO.getTitle(), currentUser.getId());
+        postService.createOrUpdate(postDTO, currentUser.getId());
         return ResponseEntity.ok(ApiResponse.success("Tạo thành công", "Tạo thành công"));
     }
 

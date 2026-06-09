@@ -1,5 +1,6 @@
 package com.restaurant.management.service.Impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restaurant.management.requests.CreateMoMoRequest;
 import com.restaurant.management.responses.CreateMoMoResponse;
 import com.restaurant.management.service.IMoMoService;
@@ -13,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,23 +45,40 @@ public class MomoServiceImpl implements IMoMoService {
     @Value("${momo.end-point}")
     private String END_POINT;
 
-    public CreateMoMoResponse createPayment(long amount, String orderInfo) throws Exception {
+    private final ObjectMapper objectMapper;
+
+    /**
+     * @param amount        số tiền
+     * @param orderInfo     mô tả đơn hàng
+     * @param paymentType   "RESERVATION" hoặc "ORDER"
+     * @param referenceId   id của reservation hoặc order trong DB
+     */
+    @Override
+    public CreateMoMoResponse createPayment(long amount, String orderInfo,
+                                            String paymentType, Long referenceId) throws Exception {
         String orderId = UUID.randomUUID().toString();
         String requestId = UUID.randomUUID().toString();
-        String extraData = "";
+
+        // Encode thông tin vào extraData để IPN biết cập nhật bảng nào
+        Map<String, Object> extraMap = new HashMap<>();
+        extraMap.put("type", paymentType);   // "RESERVATION" hoặc "ORDER"
+        extraMap.put("id", referenceId);     // reservationId hoặc orderId trong DB
+        String extraData = Base64.getEncoder().encodeToString(
+                objectMapper.writeValueAsString(extraMap).getBytes(StandardCharsets.UTF_8)
+        );
 
         String rawSignature = String.format(
                 "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
-                ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL, requestId, REQUEST_TYPE
+                ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo,
+                PARTNER_CODE, REDIRECT_URL, requestId, REQUEST_TYPE
         );
 
-        String signature;
-        try {
-            signature = signHmacSHA256(rawSignature, SECRET_KEY);
-        } catch (Exception e) {
-            log.error("Lỗi khi ký chữ ký MoMo", e);
-            return null;
-        }
+        String signature = signHmacSHA256(rawSignature, SECRET_KEY);
+
+        log.info("=== MOMO CREATE PAYMENT ===");
+        log.info("PaymentType: {}, ReferenceId: {}", paymentType, referenceId);
+        log.info("ExtraData: {}", extraData);
+        log.info("RawSignature: {}", rawSignature);
 
         CreateMoMoRequest request = CreateMoMoRequest.builder()
                 .partnerCode(PARTNER_CODE)
@@ -79,15 +99,30 @@ public class MomoServiceImpl implements IMoMoService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<CreateMoMoRequest> httpRequest = new HttpEntity<>(request, headers);
-
             ResponseEntity<CreateMoMoResponse> response = restTemplate.exchange(
-                    END_POINT + "/create", HttpMethod.POST, httpRequest, CreateMoMoResponse.class
+                    END_POINT + "/create", HttpMethod.POST,
+                    new HttpEntity<>(request, headers), CreateMoMoResponse.class
             );
 
             return response.getBody();
         } catch (Exception e) {
             log.error("Lỗi khi gọi API MoMo", e);
+            return null;
+        }
+    }
+
+    /**
+     * Parse extraData từ IPN để biết loại thanh toán và id tương ứng
+     * return Map với keys: "type" (String) và "id" (Long)
+     */
+    @Override
+    public Map<String, Object> parseExtraData(String extraDataEncoded) {
+        try {
+            if (extraDataEncoded == null || extraDataEncoded.isEmpty()) return null;
+            String json = new String(Base64.getDecoder().decode(extraDataEncoded), StandardCharsets.UTF_8);
+            return objectMapper.readValue(json, Map.class);
+        } catch (Exception e) {
+            log.error("Không parse được extraData: {}", extraDataEncoded, e);
             return null;
         }
     }
@@ -100,32 +135,37 @@ public class MomoServiceImpl implements IMoMoService {
 
         StringBuilder hexString = new StringBuilder();
         for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
+            hexString.append(String.format("%02x", b));
         }
         return hexString.toString();
     }
 
     @Override
     public boolean verifySignature(Map<String, String> params, String secureHash) throws Exception {
-        String amount = params.get("amount");
-        String extraData = params.getOrDefault("extraData", "");
-        String message = params.get("message");
-        String orderId = params.get("orderId");
-        String orderInfo = params.get("orderInfo");
-        String partnerCode = params.get("partnerCode");
-        String requestId = params.get("requestId");
-        String responseTime = params.get("responseTime");
-        String resultCode = params.get("resultCode");
-        String transId = params.get("transId");
+        if (secureHash == null || secureHash.isEmpty()) return false;
 
         String rawSignature = String.format(
                 "accessKey=%s&amount=%s&extraData=%s&message=%s&orderId=%s&orderInfo=%s&partnerCode=%s&requestId=%s&responseTime=%s&resultCode=%s&transId=%s",
-                ACCESS_KEY, amount, extraData, message, orderId, orderInfo, partnerCode, requestId, responseTime, resultCode, transId
+                ACCESS_KEY,
+                params.get("amount"),
+                params.getOrDefault("extraData", ""),
+                params.getOrDefault("message", ""),
+                params.get("orderId"),
+                params.get("orderInfo"),
+                params.get("partnerCode"),
+                params.get("requestId"),
+                params.get("responseTime"),
+                params.get("resultCode"),
+                params.get("transId")
         );
 
-        String secureHashCheck = signHmacSHA256(rawSignature, SECRET_KEY);
-        return secureHashCheck != null && secureHashCheck.equalsIgnoreCase(secureHash);
+        String calculated = signHmacSHA256(rawSignature, SECRET_KEY);
+        log.info("=== MOMO VERIFY ===");
+        log.info("RawSignature: {}", rawSignature);
+        log.info("Input:      {}", secureHash);
+        log.info("Calculated: {}", calculated);
+        log.info("Match: {}", calculated.equalsIgnoreCase(secureHash));
+
+        return calculated.equalsIgnoreCase(secureHash);
     }
 }

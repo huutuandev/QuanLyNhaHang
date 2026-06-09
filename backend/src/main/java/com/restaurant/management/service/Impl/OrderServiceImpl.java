@@ -33,14 +33,14 @@ public class OrderServiceImpl implements IOrderService {
     private final ModelMapper modelMapper;
 
     @Override
-    public OrderDTO createOrUpdate(UserDTO userDTO,OrderDTO orderDTO) {
+    public OrderDTO createOrUpdate(Long userId, OrderDTO orderDTO) {
         OrderEntity order = orderDTO.getId() != null
                 ? orderRepo.findById(orderDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderDTO.getId()))
                 : new OrderEntity();
         mapDTOToEntity(orderDTO, order);
         order.setStaff(userRepo.findById(orderDTO.getStaffId())
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userDTO.getId())));
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + userId)));
         order.setTable(tableRepo.findById(orderDTO.getTableId())
                 .orElseThrow(() -> new RuntimeException("Table not found with id: " + orderDTO.getTableId())));
         setOrderItems(orderDTO, order);

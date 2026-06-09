@@ -1,11 +1,12 @@
 package com.restaurant.management.controller;
 
 import com.restaurant.management.dto.ReservationDTO;
-import com.restaurant.management.dto.UserDTO;
+import com.restaurant.management.security.CustomUserDetails;
 import com.restaurant.management.responses.ApiResponse;
 import com.restaurant.management.responses.PagedResponse;
 import com.restaurant.management.service.IReservationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +30,12 @@ public class ReservationController {
 
     @PostMapping
     @Operation(summary = "Create or update reservation", description = "Creates a new table booking reservation or updates an existing one.")
-    public ResponseEntity<ApiResponse<ReservationDTO>> createOrUpdate(@AuthenticationPrincipal UserDTO user, @Valid @RequestBody ReservationDTO dto) {
-        log.info("Creating or updating reservation for customer: {}", (user != null ? user.getPhoneNumber() : "Anonymous"));
-        ReservationDTO result = reservationService.createOrUpdate(user, dto);
+    public ResponseEntity<ApiResponse<ReservationDTO>> createOrUpdate(
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails currentUser,
+            @Valid @RequestBody ReservationDTO dto
+    ) {
+        log.info("Creating or updating reservation for customer: {}", (currentUser != null ? currentUser.getPhoneNumber() : "Anonymous"));
+        ReservationDTO result = reservationService.createOrUpdate(currentUser.getId(), dto);
         return ResponseEntity.ok(ApiResponse.success("Reservation saved successfully", result));
     }
 
@@ -54,12 +58,12 @@ public class ReservationController {
     @GetMapping("/my")
     @Operation(summary = "Get current user's reservations", description = "Retrieves a paginated list of reservations belonging to the authenticated customer.")
     public ResponseEntity<ApiResponse<PagedResponse<ReservationDTO>>> getAllByUser(
-            @AuthenticationPrincipal UserDTO user,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails currentUser,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        log.info("Fetching reservations for user ID: {}, Page: {}, Size: {}", user.getId(), page, size);
-        Page<ReservationDTO> reservationDTOPage = reservationService.getAllByUser(user.getId(), page, size);
+        log.info("Fetching reservations for user ID: {}, Page: {}, Size: {}", currentUser.getId(), page, size);
+        Page<ReservationDTO> reservationDTOPage = reservationService.getAllByUser(currentUser.getId(), page, size);
         PagedResponse<ReservationDTO> pagedResponse = new PagedResponse<>(reservationDTOPage, reservationDTOPage.getContent());
         return ResponseEntity.ok(ApiResponse.success("My reservations retrieved successfully", pagedResponse));
     }
