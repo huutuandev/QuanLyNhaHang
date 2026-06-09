@@ -92,12 +92,12 @@ public class VnPayServiceImpl implements IVnPayService {
                 hashData.append(fieldName).append("=").append(fieldValue);
 
                 // query string: encode
-                String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8)
+                String encodedValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.name())
                         .replace("+", "%20")
                         .replace("*", "%2A")
                         .replace("%7E", "~");
                 if (query.length() > 0) query.append("&");
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8))
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.name()))
                         .append("=").append(encodedValue);
             }
         }

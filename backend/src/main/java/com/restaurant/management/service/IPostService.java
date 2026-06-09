@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page;
 public interface IPostService {
     Page<PostDTO> findAll(int page, int size);
     PostDTO findById(Long Id);
-    PostDTO createOrUpdate(PostDTO postDTO, UserDTO userDTO);
+    PostDTO createOrUpdate(PostDTO postDTO, Long userId);
     void deleteById(Long id);
 }

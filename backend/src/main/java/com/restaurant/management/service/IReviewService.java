@@ -4,6 +4,6 @@ import com.restaurant.management.dto.ReviewDTO;
 import com.restaurant.management.dto.UserDTO;
 
 public interface IReviewService {
-    ReviewDTO createOrUpdate(UserDTO userDTO, ReviewDTO reviewDTO);
-    void deleteById(Long id, UserDTO userDTO);
+    ReviewDTO createOrUpdate(Long userId, ReviewDTO reviewDTO);
+    void deleteById(Long id, Long userId);
 }

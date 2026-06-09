@@ -136,19 +136,19 @@ public class PaymentController {
         // String signature = params.get("signature");
         // if (!momoService.verifySignature(params, signature)) {
         //     log.warn("MoMo IPN invalid signature");
-        //     return ResponseEntity.ok(Map.of("status", "success")); // vẫn trả 200 cho MoMo
+        //     return ResponseEntity.ok(java.util.Collections.singletonMap("status", "success")); // vẫn trả 200 cho MoMo
         // }
 
         if (!"0".equals(resultCode)) {
             log.warn("MoMo payment FAILED - resultCode: {}, message: {}", resultCode, params.get("message"));
-            return ResponseEntity.ok(Map.of("status", "success"));
+            return ResponseEntity.ok(java.util.Collections.singletonMap("status", "success"));
         }
 
         // Parse extraData để biết loại thanh toán
         Map<String, Object> extraData = momoService.parseExtraData(extraDataEncoded);
         if (extraData == null) {
             log.error("Không parse được extraData: {}", extraDataEncoded);
-            return ResponseEntity.ok(Map.of("status", "success"));
+            return ResponseEntity.ok(java.util.Collections.singletonMap("status", "success"));
         }
 
         String type = (String) extraData.get("type");
@@ -166,6 +166,6 @@ public class PaymentController {
             orderService.updatePaymentStatus(referenceId, "PAID", transId);
         }
 
-        return ResponseEntity.ok(Map.of("status", "success"));
+        return ResponseEntity.ok(java.util.Collections.singletonMap("status", "success"));
     }
 }
